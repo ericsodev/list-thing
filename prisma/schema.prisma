@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @unique @default(uuid())
+  name         String         @unique
+  hashedPass   String
+  refreshToken RefreshToken[]
+  ListUser     ListUser[]
+  comment      Comment[]
+  Item         Item[]
+}
+
+model List {
+  id       String     @unique @default(uuid())
+  ListUser ListUser[]
+  item     Item[]
+  name     String
+  Tag      Tag[]
+}
+
+model ListUser {
+  joinDate DateTime @default(now())
+  role     ROLE
+  user     User     @relation(fields: [userId], references: [id])
+  list     List     @relation(fields: [listId], references: [id])
+  userId   String
+  listId   String
+
+  @@id([userId, listId])
+}
+
+model Item {
+  id        String    @unique @default(uuid())
+  dateAdded DateTime  @default(now())
+  name      String
+  list      List      @relation(fields: [listId], references: [id], onDelete: Cascade)
+  comment   Comment[]
+  listId    String
+  adder     User      @relation(fields: [userId], references: [id])
+  userId    String
+  likes     Int       @default(0)
+  ItemTag   ItemTag[]
+
+  @@index([listId, dateAdded])
+}
+
+model ItemTag {
+  tagName String
+  item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId  String
+  Tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId   String
+
+  @@id([tagId, itemId])
+}
+
+model Tag {
+  id      String    @unique @default(uuid())
+  list    List      @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId  String
+  name    String
+  ItemTag ItemTag[]
+}
+
+model Comment {
+  id        String   @unique @default(uuid())
+  dateAdded DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  text      String
+  userId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    String
+
+  @@index([itemId, dateAdded])
+}
+
+model RefreshToken {
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token  String
+  userId String
+
+  @@id([userId, token])
+}
+
+enum ROLE {
+  OWNER
+  MEMBER
+}
