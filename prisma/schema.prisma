@@ -11,13 +11,13 @@ datasource db {
 }
 
 model User {
-  id           String         @unique @default(uuid())
-  name         String         @unique
-  hashedPass   String
-  refreshToken RefreshToken[]
-  ListUser     ListUser[]
-  comment      Comment[]
-  Item         Item[]
+  id            String         @unique @default(uuid())
+  name          String         @unique
+  encryptedPass String
+  refreshToken  RefreshToken[]
+  ListUser      ListUser[]
+  comment       Comment[]
+  Item          Item[]
 }
 
 model List {

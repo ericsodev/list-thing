@@ -127,17 +127,18 @@ const typeDefs = gql`
   type Query {
     lists(input: ListInput): [List!]!
     list(id: ID!): List
-    users(input: UserSearchInput): [User!]!
+    users(input: UserSearchInput!): [User!]!
     user(name: String, id: String): User
+    getAccessToken: String!
     self: User
   }
 
   type Mutation {
-    authenticate(input: AuthenticationInput): String
-    createAccount(input: CreateUserInput): Boolean!
+    authenticate(input: AuthenticationInput!): String
+    createAccount(input: CreateUserInput!): Boolean!
     createList(name: String!): List!
-    addItem(input: AddItemInput): Item!
-    removeItem(input: AddItemInput): Boolean
+    addItem(input: AddItemInput!): Item!
+    removeItem(input: AddItemInput!): Boolean
   }
 `;
 

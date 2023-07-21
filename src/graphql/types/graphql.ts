@@ -113,17 +113,17 @@ export type Mutation = {
 
 
 export type MutationAddItemArgs = {
-  input?: InputMaybe<AddItemInput>;
+  input: AddItemInput;
 };
 
 
 export type MutationAuthenticateArgs = {
-  input?: InputMaybe<AuthenticationInput>;
+  input: AuthenticationInput;
 };
 
 
 export type MutationCreateAccountArgs = {
-  input?: InputMaybe<CreateUserInput>;
+  input: CreateUserInput;
 };
 
 
@@ -133,11 +133,12 @@ export type MutationCreateListArgs = {
 
 
 export type MutationRemoveItemArgs = {
-  input?: InputMaybe<AddItemInput>;
+  input: AddItemInput;
 };
 
 export type Query = {
   __typename?: 'Query';
+  getAccessToken: Scalars['String']['output'];
   list?: Maybe<List>;
   lists: Array<List>;
   self?: Maybe<User>;
@@ -163,7 +164,7 @@ export type QueryUserArgs = {
 
 
 export type QueryUsersArgs = {
-  input?: InputMaybe<UserSearchInput>;
+  input: UserSearchInput;
 };
 
 export enum Role {
@@ -212,5 +213,22 @@ export type GetListQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetListQueryQuery = { __typename?: 'Query', list?: { __typename?: 'List', name: string } | null };
 
+export type CreateAccountMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+}>;
+
+
+export type CreateAccountMutation = { __typename?: 'Mutation', createAccount: boolean };
+
+export type SearchUserQueryVariables = Exact<{
+  input: UserSearchInput;
+}>;
+
+
+export type SearchUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', name: string }> };
+
 
 export const GetListQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetListQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"list"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"StringValue","value":"sdfsdf","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<GetListQueryQuery, GetListQueryQueryVariables>;
+export const CreateAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}]}]}}]} as unknown as DocumentNode<CreateAccountMutation, CreateAccountMutationVariables>;
+export const SearchUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"searchUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserSearchInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<SearchUserQuery, SearchUserQueryVariables>;

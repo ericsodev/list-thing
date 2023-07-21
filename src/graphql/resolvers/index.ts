@@ -1,3 +1,17 @@
-const resolvers = {};
+import authResolver from "./AuthResolver";
+import commentResolver from "./CommentResolver";
+import itemResolver from "./ItemResolver";
+import listResolver from "./ListResolver";
+import userResolver from "./UserResolver";
 
-export default resolvers;
+import { mergeResolvers } from "@graphql-tools/merge";
+
+const resolvers = [
+  authResolver,
+  commentResolver,
+  itemResolver,
+  listResolver,
+  userResolver,
+];
+
+export default mergeResolvers(resolvers);
