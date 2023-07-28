@@ -3,19 +3,23 @@ import prisma from "../../lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import { env } from "../env";
+import { verifyAccessToken } from "./util/token";
+import { User } from "./types/graphql";
 
 export type Context = {
   prisma: PrismaClient;
   req: NextApiRequest;
   res: NextApiResponse;
+  user?: User;
 };
 
 export const createContext = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
+  let user: User | undefined;
   if (req.headers.authorization) {
-    jwt.verify(req.headers.authorization, env.JWT_SEC);
+    user = await verifyAccessToken(req.headers.authorization);
   }
-  return { prisma, req, res };
+  return { prisma, req, res, user };
 };

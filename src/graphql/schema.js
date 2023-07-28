@@ -129,7 +129,7 @@ const typeDefs = gql`
     list(id: ID!): List
     users(input: UserSearchInput!): [User!]!
     user(name: String, id: String): User
-    getAccessToken: String!
+    token: String!
     self: User
   }
 

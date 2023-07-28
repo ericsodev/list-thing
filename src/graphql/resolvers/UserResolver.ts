@@ -1,23 +1,13 @@
 import { GraphQLError } from "graphql";
 import { Context } from "../context";
-import { verifyAccessToken } from "../util/token";
 import { QueryUsersArgs, User } from "../types/graphql";
+import { hasValidToken } from "./authUtil";
+import { CUSTOM_ERR, CUSTOM_ERR_MSGS } from "../errorCodes";
 
 const resolver = {
   Query: {
     self: async (_parent: any, _args: any, ctx: Context): Promise<User> => {
-      if (!ctx.req.headers.authorization) {
-        throw new GraphQLError("No token found", {
-          extensions: { code: "UNAUTHORIZED" },
-        });
-      }
-      const payload = await verifyAccessToken(ctx.req.headers.authorization);
-      if (!payload) {
-        throw new GraphQLError("No token found", {
-          extensions: { code: "UNAUTHORIZED" },
-        });
-      }
-      await verifyAccessToken(ctx.req.headers.authorization);
+      const payload = await hasValidToken();
       const user = await ctx.prisma.user.findUnique({
         where: { id: payload.id },
         select: {
@@ -26,8 +16,8 @@ const resolver = {
         },
       });
       if (!user) {
-        throw new GraphQLError("User not found", {
-          extensions: { code: "FORBIDDEN" },
+        throw new GraphQLError(CUSTOM_ERR_MSGS.NO_USER, {
+          extensions: { code: CUSTOM_ERR.NO_USER },
         });
       }
       return user;

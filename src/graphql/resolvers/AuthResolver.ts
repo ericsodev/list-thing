@@ -4,18 +4,75 @@ import {
 } from "../types/graphql";
 import { Context } from "../context";
 import { GraphQLError } from "graphql";
-import { userSchema } from "../formSchemas/userSchema";
+import { userSchema } from "../../types/formSchemas/userSchema";
 import bcrypt from "bcrypt";
-import { generateRefreshToken } from "../util/token";
+import { generateAccessToken, generateRefreshToken } from "../util/token";
 import { serialize } from "cookie";
+import { isLoggedIn } from "./authUtil";
+import { CUSTOM_ERR, CUSTOM_ERR_MSGS } from "../errorCodes";
 
 const resolver = {
   Query: {
-    getAccessToken: async (_p: any) => {},
+    token: async (_p: any, _a: any, ctx: Context) => {
+      const user = await isLoggedIn(ctx.req.cookies["refresh-token"]);
+      const token = await generateAccessToken(user);
+      if (!token) {
+        throw new GraphQLError(CUSTOM_ERR_MSGS.TOKEN_ERR, {
+          extensions: { code: CUSTOM_ERR.TOKEN_ERR },
+        });
+      }
+      return token;
+    },
   },
   Mutation: {
-    authenticate: async (_: any, args: MutationAuthenticateArgs) => {
-      return `${args.input.name}, ${args.input.password} + 1`;
+    authenticate: async (
+      _: any,
+      args: MutationAuthenticateArgs,
+      ctx: Context
+    ) => {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          name: args.input.name,
+        },
+        select: {
+          name: true,
+          id: true,
+          encryptedPass: true,
+        },
+      });
+      if (!user) {
+        throw new GraphQLError(CUSTOM_ERR_MSGS.NO_USER, {
+          extensions: {
+            code: CUSTOM_ERR.NO_USER,
+          },
+        });
+      }
+
+      if (!(await bcrypt.compare(args.input.password, user.encryptedPass))) {
+        throw new GraphQLError(CUSTOM_ERR_MSGS.TOKEN_ERR, {
+          extensions: { code: CUSTOM_ERR.TOKEN_ERR },
+        });
+      }
+
+      const refresh = await generateRefreshToken({
+        name: user.name,
+        id: user.id,
+      });
+      const access = await generateAccessToken({
+        name: user.name,
+        id: user.id,
+      });
+
+      if (!(refresh && access)) {
+        throw new GraphQLError(CUSTOM_ERR_MSGS.TOKEN_ERR, {
+          extensions: { code: CUSTOM_ERR.TOKEN_ERR },
+        });
+      }
+      ctx.res.setHeader(
+        "Set-Cookie",
+        serialize("refresh-token", refresh, { path: "/", httpOnly: true })
+      );
+      return access;
     },
     createAccount: async (
       _: any,
@@ -35,7 +92,9 @@ const resolver = {
         },
       });
       if (existingUsers) {
-        throw new GraphQLError("This username has been taken");
+        throw new GraphQLError(CUSTOM_ERR_MSGS.USER_EXISTS, {
+          extensions: { code: CUSTOM_ERR.USER_EXISTS },
+        });
       }
 
       // create account
@@ -53,7 +112,12 @@ const resolver = {
 
       // generate a refresh token and add as httpOnly cookie
       const refreshToken = await generateRefreshToken(user);
-      if (!refreshToken) throw new GraphQLError("Error generating JWT");
+
+      if (!refreshToken) {
+        throw new GraphQLError(CUSTOM_ERR_MSGS.TOKEN_ERR, {
+          extensions: { code: CUSTOM_ERR.TOKEN_ERR },
+        });
+      }
       ctx.res.setHeader(
         "Set-Cookie",
         serialize("refresh-token", refreshToken, { path: "/", httpOnly: true })

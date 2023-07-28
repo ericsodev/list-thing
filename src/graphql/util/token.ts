@@ -1,16 +1,14 @@
 import jwt from "jsonwebtoken";
 import { env } from "@/env";
+import type { User } from "../types/graphql";
 
-type User = {
-  id: string;
-  name: string;
-};
 async function generateToken(
   user: User,
-  secret: string
+  secret: string,
+  expiresIn: number | string
 ): Promise<string | undefined> {
   return new Promise((resolve, reject) => {
-    jwt.sign(user, secret, (err, token) =>
+    jwt.sign(user, secret, { expiresIn }, (err, token) =>
       err ? resolve(undefined) : resolve(token as string)
     );
   });
@@ -28,10 +26,10 @@ async function verifyToken(
 }
 
 export async function generateRefreshToken(user: User) {
-  return await generateToken(user, env.REFRESH_KEY);
+  return await generateToken(user, env.REFRESH_KEY, env.REFRESH_EXP);
 }
 export async function generateAccessToken(user: User) {
-  return await generateToken(user, env.ACCESS_KEY);
+  return await generateToken(user, env.ACCESS_KEY, env.ACCESS_EXP);
 }
 
 export async function verifyRefreshToken(token: string) {

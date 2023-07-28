@@ -13,7 +13,9 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  query GetToken {\n    token\n  }\n": types.GetTokenDocument,
     "\n  query GetListQuery {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n": types.GetListQueryDocument,
+    "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n": types.LoginDocument,
     "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n": types.CreateAccountDocument,
     "\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n": types.SearchUserDocument,
 };
@@ -35,7 +37,15 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query GetToken {\n    token\n  }\n"): (typeof documents)["\n  query GetToken {\n    token\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query GetListQuery {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n"): (typeof documents)["\n  query GetListQuery {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n"): (typeof documents)["\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
