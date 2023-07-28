@@ -2,18 +2,8 @@ import { Menu } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { useAuth } from "../AuthContext";
 import { twMerge } from "tailwind-merge";
+import { linksAuthed, linksUnauthed } from "./links";
 
-const linksUnauthed = [
-  { href: "/login", label: "log in" },
-  { href: "/signup", label: "sign up" },
-  { href: "/about", label: "about" },
-];
-const linksAuthed = [
-  { href: "/dashboard", label: "dashboard" },
-  { href: "/account", label: "account" },
-  { href: "/about", label: "about" },
-  { href: "/logout", label: "log out" },
-];
 export default function Dropdown({ className }: { className?: string }) {
   const {
     session: { authed },

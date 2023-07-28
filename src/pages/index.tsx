@@ -1,10 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen grid grid-cols-12 gap-10 sm:gap-4 pt-28 px-12 w-screen">
-      <div className="md:col-start-3 col-span-full md:col-span-10 flex flex-col justify-center">
+      <div className="pb-16 md:pb-0 md:col-start-3 col-span-full md:col-span-10 flex flex-col justify-center relative">
         <h1 className="text-5xl sm:text-6xl text-slate-800">
           <strong className="text-green-300 font-semibold">Lists</strong> for
           anything, everywhere
@@ -12,6 +13,12 @@ export default function HomePage() {
         <p className="text-xl sm:text-2xl text-slate-700 mt-3">
           A better way for to create and link lists to actionable items.
         </p>
+        <Link
+          className="absolute bottom-0 left-0 text-lg rounded-md bg-green-200 text-teal-800 self-start px-6 py-2 drop-shadow-sm hover:bg-green-300 transition-colors"
+          href="/signup"
+        >
+          get started
+        </Link>
       </div>
       <div className="flex w-full items-center md:col-start-3 col-span-full md:col-span-10">
         <div className="grid grid-cols-1 sm:grid-cols-[repeat(2,250px)] md:grid-cols-[repeat(2,300px)] h-fit basis-auto items-stretch justify-start gap-4">
