@@ -9,13 +9,13 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { client } from "./_app";
 import { SearchUserQuery } from "@/graphql/types/graphql";
-import { userSchema } from "@/graphql/formSchemas/userSchema";
-import { useRouter } from "next/router";
+import { userSchema } from "@/types/formSchemas/userSchema";
+import { NextRouter, useRouter } from "next/router";
 
 export default function CreateAccountPage() {
   const router = useRouter();
   return (
-    <div className="min-h-screen p-2 bg-slate-200 grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center">
+    <div className="min-h-screen p-2 grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3">
         <h1 className="text-2xl font-medium text-slate-950 text-center my-12">
           create account
@@ -25,8 +25,7 @@ export default function CreateAccountPage() {
           validationSchema={toFormikValidationSchema(userSchema)}
           initialValues={{ name: "", password: "" }}
           onSubmit={async (val) => {
-            await submit(val);
-            router.push("/");
+            await submit(val, router);
           }}
           isInitialValid={false}
           validate={validate}
@@ -108,16 +107,19 @@ async function validate(values: z.infer<typeof userSchema>) {
   if (data.users.length === 0) return {};
 
   return {
-    user: "This username has been taken",
+    name: "This username has been taken",
   };
 }
 
-async function submit(values: z.infer<typeof userSchema>) {
-  await client.mutate({
+async function submit(values: z.infer<typeof userSchema>, router: NextRouter) {
+  const { errors } = await client.mutate({
     mutation: createAccountMutation,
     variables: {
       name: values.name,
       password: values.password,
     },
   });
+  if (!errors) {
+    router.push("/dashboard");
+  }
 }

@@ -15,7 +15,7 @@ const resolver = {
   Query: {
     token: async (_p: any, _a: any, ctx: Context) => {
       const user = await isLoggedIn(ctx.req.cookies["refresh-token"]);
-      const token = await generateAccessToken(user);
+      const token = await generateAccessToken({ name: user.name, id: user.id });
       if (!token) {
         throw new GraphQLError(CUSTOM_ERR_MSGS.TOKEN_ERR, {
           extensions: { code: CUSTOM_ERR.TOKEN_ERR },

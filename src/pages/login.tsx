@@ -1,53 +1,59 @@
 import Button from "@/components/Button";
 import TextInput from "@/components/TextInput";
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
 import React from "react";
-import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-
-const formSchema = z.object({
-  user: z
-    .string({ required_error: "A username is required" })
-    .max(30, "Your username  cannot exceed 30 characters")
-    .refine(
-      (user) => user.match(/^\S+$/)?.length === 1,
-      "Your username cannot contain whitespace"
-    ),
-  password: z
-    .string({ required_error: "A password is required" })
-    .min(2, "Your password must be at least 8 characters long."),
-});
+import { userSchema, User } from "@/types/formSchemas/userSchema";
+import {
+  MutationFunction,
+  MutationResult,
+  gql,
+  useMutation,
+} from "@apollo/client";
+import { client } from "./_app";
+import { NextRouter, useRouter } from "next/router";
+import { CUSTOM_ERR, CUSTOM_ERR_MSGS } from "@/graphql/errorCodes";
+import { LoginMutation } from "@/graphql/types/graphql";
+import Navbar from "@/components/Navbar";
 
 export default function Login() {
+  const [loginFn, loginState] = useMutation<LoginMutation>(loginMutation, {
+    errorPolicy: "all",
+  });
+  const router = useRouter();
   return (
-    <div className="min-h-screen p-2 bg-slate-200 grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center">
-      <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3">
+    <div className="p-2 grow grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center min-h-screen">
+      <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3 relative overflow-clip">
         <h1 className="text-2xl font-medium text-slate-950 text-center my-12">
-          create account
+          log in
         </h1>
 
         <Formik
-          validationSchema={toFormikValidationSchema(formSchema)}
-          initialValues={{ user: "", password: "" }}
-          onSubmit={(val) => {}}
-          isInitialValid={false}
+          validationSchema={toFormikValidationSchema(userSchema)}
+          initialValues={{ name: "", password: "" }}
+          onSubmit={async (values, helpers) => {
+            await submit(values, helpers, router, loginFn, loginState);
+          }}
         >
-          {({ isSubmitting, isValid, errors, values, handleChange }) => {
+          {({ isSubmitting, errors, values, handleChange, touched }) => {
             return (
               <Form className="flex flex-col gap-4">
+                {isSubmitting && (
+                  <div className="absolute top-0 bottom-0 left-0 right-0 bg-slate-50/60"></div>
+                )}
                 <div>
                   <label className="block mb-1 text-slate-600 font-medium text-sm">
                     username
                   </label>
                   <TextInput
-                    name="user"
+                    name="name"
                     className="w-full"
-                    value={values.user}
+                    value={values.name}
                     onChange={handleChange}
                   ></TextInput>
                   <label className="block mt-2 text-red-500 text-sm min-h-[1.25rem]">
-                    {errors.user}
+                    {touched.name && errors.name}
                   </label>
                 </div>
                 <div>
@@ -62,7 +68,7 @@ export default function Login() {
                     onChange={handleChange}
                   ></TextInput>
                   <label className="block mt-2 text-red-500 text-sm min-h-[1.25rem]">
-                    {errors.password}
+                    {touched.password && errors.password}
                   </label>
                 </div>
                 <div className="mt-4">
@@ -72,7 +78,7 @@ export default function Login() {
                   >
                     don&apos;t have an account? create one here.
                   </Link>
-                  <Button className="w-full" color="green">
+                  <Button className="w-full" color="green" type="submit">
                     log in
                   </Button>
                 </div>
@@ -83,4 +89,47 @@ export default function Login() {
       </div>
     </div>
   );
+}
+
+const loginMutation = gql`
+  mutation Login($input: AuthenticationInput!) {
+    authenticate(input: $input)
+  }
+`;
+
+async function submit(
+  value: User,
+  { setErrors, setSubmitting }: FormikHelpers<User>,
+  router: NextRouter,
+  loginFn: MutationFunction<LoginMutation>,
+  loginState: MutationResult<LoginMutation>
+) {
+  await new Promise((res) => setTimeout(res, 500));
+  await loginFn({
+    variables: {
+      input: {
+        name: value.name,
+        password: value.password,
+      },
+    },
+  });
+  setSubmitting(false);
+
+  if (
+    loginState.error?.graphQLErrors.some(
+      (e) => e.message === CUSTOM_ERR_MSGS.WR_PASS
+    )
+  ) {
+    setErrors({ password: "Incorrect password" });
+  }
+  if (
+    loginState.error?.graphQLErrors.some(
+      (e) => e.message === CUSTOM_ERR_MSGS.NO_USER
+    )
+  ) {
+    setErrors({ name: "User does not exist" });
+  }
+  if (loginState.error?.graphQLErrors.length === 0) {
+    router.push("/dashboard");
+  }
 }

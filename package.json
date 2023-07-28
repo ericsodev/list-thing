@@ -16,6 +16,7 @@
     "@as-integrations/next": "^2.0.1",
     "@fontsource/poppins": "^5.0.5",
     "@graphql-tools/merge": "^9.0.0",
+    "@headlessui/react": "^1.7.16",
     "@prisma/client": "^4.15.0",
     "@types/node": "20.4.2",
     "@types/react": "18.2.15",

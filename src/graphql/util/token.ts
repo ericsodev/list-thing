@@ -8,9 +8,9 @@ async function generateToken(
   expiresIn: number | string
 ): Promise<string | undefined> {
   return new Promise((resolve, reject) => {
-    jwt.sign(user, secret, { expiresIn }, (err, token) =>
-      err ? resolve(undefined) : resolve(token as string)
-    );
+    jwt.sign(user, secret, { expiresIn }, (err, token) => {
+      err ? resolve(undefined) : resolve(token as string);
+    });
   });
 }
 
