@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -21,11 +22,12 @@ model User {
 }
 
 model List {
-  id       String     @unique @default(uuid())
-  ListUser ListUser[]
-  item     Item[]
-  name     String
-  Tag      Tag[]
+  id        String     @unique @default(uuid())
+  ListUser  ListUser[]
+  item      Item[]
+  name      String
+  Tag       Tag[]
+  createdOn DateTime   @default(now())
 }
 
 model ListUser {
@@ -41,7 +43,7 @@ model ListUser {
 
 model Item {
   id        String    @unique @default(uuid())
-  dateAdded DateTime  @default(now())
+  createdOn DateTime  @default(now())
   name      String
   list      List      @relation(fields: [listId], references: [id], onDelete: Cascade)
   comment   Comment[]
@@ -51,7 +53,7 @@ model Item {
   likes     Int       @default(0)
   ItemTag   ItemTag[]
 
-  @@index([listId, dateAdded])
+  @@index([listId, createdOn])
 }
 
 model ItemTag {
@@ -74,14 +76,14 @@ model Tag {
 
 model Comment {
   id        String   @unique @default(uuid())
-  dateAdded DateTime @default(now())
+  createdOn DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   text      String
   userId    String
   item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    String
 
-  @@index([itemId, dateAdded])
+  @@index([itemId, createdOn])
 }
 
 model RefreshToken {
