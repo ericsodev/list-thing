@@ -1,10 +1,9 @@
 import { GetTokenQuery, LogoutMutation, User } from "@/graphql/types/graphql";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import jwt from "jsonwebtoken";
 import { getTokenQuery, logoutMutation } from "./graphql";
 import { setContext } from "@apollo/client/link/context";
-import { client } from "@/pages/_app";
 
 type AuthContext = {
   session: {
@@ -24,37 +23,43 @@ const AuthContext = React.createContext<AuthContext>({
 });
 
 export default function AuthProvider({ children }: React.PropsWithChildren) {
+  const [session, setSession] = useState<AuthContext["session"]>({ authed: false });
   const { data, refetch, loading } = useQuery<GetTokenQuery>(getTokenQuery, {
     pollInterval: 10 * 60 * 1000,
+    onCompleted: ({ token }) => {
+      let user: User | undefined = undefined;
+      user = jwt.decode(token) as User;
+      setSession({
+        user,
+        authed: true,
+        token: token,
+      });
+    },
   });
   const [logout] = useMutation<LogoutMutation>(logoutMutation);
-  let user: User | undefined = undefined;
-  if (data) {
-    user = jwt.decode(data.token) as User;
-  }
   return (
     <AuthContext.Provider
       value={{
-        session: {
-          token: data?.token,
-          user,
-          authed: !!data,
-        },
+        session,
         loading,
         logout: async () => {
-          await logout();
-          client.resetStore();
+          try {
+            await logout();
+            setSession({ authed: false });
+          } catch (err) {}
         },
         refetch: async () => {
-          await refetch();
-          setContext((_, { headers }) => {
-            return {
-              headers: {
-                ...headers,
-                authorization: data?.token,
-              },
-            };
-          });
+          try {
+            await refetch();
+            setContext((_, { headers }) => {
+              return {
+                headers: {
+                  ...headers,
+                  authorization: data?.token,
+                },
+              };
+            });
+          } catch (err) {}
         },
       }}
     >
