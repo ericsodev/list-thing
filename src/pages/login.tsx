@@ -2,7 +2,7 @@ import Button from "@/components/Button";
 import TextInput from "@/components/TextInput";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { userSchema, User } from "@/types/formSchemas/userSchema";
 import { MutationFunction, MutationResult, gql, useMutation } from "@apollo/client";
@@ -18,7 +18,16 @@ export default function Login() {
     errorPolicy: "all",
   });
   const router = useRouter();
-  const { refetch } = useAuth();
+  const {
+    refetch,
+    session: { authed },
+  } = useAuth();
+
+  useEffect(() => {
+    if (authed) {
+      router.push("/dashboard");
+    }
+  }, [router, authed]);
   return (
     <div className="p-2 grow grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center min-h-screen">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3 relative overflow-clip">

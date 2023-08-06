@@ -4,16 +4,26 @@ import { useQuery } from "@apollo/client";
 import { Form, Formik } from "formik";
 import gql from "graphql-tag";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { client } from "./_app";
 import { SearchUserQuery } from "@/graphql/types/graphql";
 import { userSchema } from "@/types/formSchemas/userSchema";
 import { NextRouter, useRouter } from "next/router";
+import { useAuth } from "@/components/AuthContext";
 
 export default function CreateAccountPage() {
   const router = useRouter();
+  const {
+    session: { authed },
+  } = useAuth();
+
+  useEffect(() => {
+    if (authed) {
+      router.push("/dashboard");
+    }
+  }, [router, authed]);
   return (
     <div className="min-h-screen p-2 grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3">
