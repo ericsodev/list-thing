@@ -7,8 +7,7 @@ export default function HomePage() {
     <div className="min-h-screen grid grid-cols-12 gap-10 sm:gap-4 pt-28 px-12 w-screen">
       <div className="pb-16 md:pb-0 md:col-start-3 col-span-full md:col-span-10 flex flex-col justify-center relative">
         <h1 className="text-5xl sm:text-6xl text-slate-800">
-          <strong className="text-green-300 font-semibold">Lists</strong> for
-          anything, everywhere
+          <strong className="text-green-300 font-semibold">Lists</strong> for anything, everywhere
         </h1>
         <p className="text-xl sm:text-2xl text-slate-700 mt-3">
           A better way for to create and link lists to actionable items.
@@ -61,9 +60,7 @@ type FeatureProps = {
 const FeatureCard = ({ feature, desc }: FeatureProps): React.ReactNode => {
   return (
     <div className="p-6 bg-slate-100 rounded-lg">
-      <h1 className="text-xl text-slate-800 font-medium self-start text-center">
-        {feature}
-      </h1>
+      <h1 className="text-xl text-slate-800 font-medium self-start text-center">{feature}</h1>
       <p className="text-slate-700 text-center">{desc}</p>
     </div>
   );

@@ -2,20 +2,18 @@ import Button from "@/components/Button";
 import TextInput from "@/components/TextInput";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { userSchema, User } from "@/types/formSchemas/userSchema";
-import { MutationFunction, MutationResult, gql, useMutation } from "@apollo/client";
-import { client } from "./_app";
+import { ApolloError, MutationFunction, MutationResult, gql, useMutation } from "@apollo/client";
 import { NextRouter, useRouter } from "next/router";
 import { LoginMutation } from "@/graphql/types/graphql";
-import Navbar from "@/components/Navbar";
 import { useAuth } from "@/components/AuthContext";
 import CUSTOM_ERRORS from "@/graphql/errorCodes";
 
 export default function Login() {
   const [loginFn, loginState] = useMutation<LoginMutation>(loginMutation, {
-    errorPolicy: "all",
+    onCompleted: () => router.push("/dashboard"),
   });
   const router = useRouter();
   const {
@@ -23,11 +21,6 @@ export default function Login() {
     session: { authed },
   } = useAuth();
 
-  useEffect(() => {
-    if (authed) {
-      router.push("/dashboard");
-    }
-  }, [router, authed]);
   return (
     <div className="p-2 grow grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center min-h-screen">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3 relative overflow-clip">
@@ -102,28 +95,31 @@ async function submit(
   { setErrors, setSubmitting }: FormikHelpers<User>,
   router: NextRouter,
   loginFn: MutationFunction<LoginMutation>,
-  loginState: MutationResult<LoginMutation>,
+  { data }: MutationResult<LoginMutation>,
   refetch: () => Promise<void>,
 ) {
-  await new Promise((res) => setTimeout(res, 500));
-  await loginFn({
-    variables: {
-      input: {
-        name: value.name,
-        password: value.password,
+  try {
+    await new Promise((res) => setTimeout(res, 100));
+    await loginFn({
+      variables: {
+        input: {
+          name: value.name,
+          password: value.password,
+        },
       },
-    },
-  });
-  setSubmitting(false);
+    });
+    setSubmitting(false);
 
-  if (loginState.error?.graphQLErrors.some((e) => e.message === CUSTOM_ERRORS.WR_PASS[0])) {
-    setErrors({ password: "Incorrect password" });
-  }
-  if (loginState.error?.graphQLErrors.some((e) => e.message === CUSTOM_ERRORS.NO_USER[0])) {
-    setErrors({ name: "User does not exist" });
-  }
-  await refetch();
-  if (!loginState.error) {
-    router.push("/dashboard");
+    await refetch();
+  } catch (err) {
+    const error = err as ApolloError;
+    if (error.graphQLErrors.some((e) => e.message === CUSTOM_ERRORS.WR_PASS[0])) {
+      setErrors({ password: "Incorrect password" });
+      return;
+    }
+    if (error?.graphQLErrors.some((e) => e.message === CUSTOM_ERRORS.NO_USER[0])) {
+      setErrors({ name: "User does not exist" });
+      return;
+    }
   }
 }

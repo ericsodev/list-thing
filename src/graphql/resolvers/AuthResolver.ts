@@ -16,7 +16,6 @@ const resolver = {
       if (!token) {
         throw new GraphQLError(...CUSTOM_ERRORS.NO_TOKEN);
       }
-      console.log(token);
       return token;
     },
   },
@@ -37,7 +36,6 @@ const resolver = {
       }
 
       if (!(await bcrypt.compare(args.input.password, user.encryptedPass))) {
-        console.log("oh no");
         throw new GraphQLError(...CUSTOM_ERRORS.WR_PASS);
       }
 

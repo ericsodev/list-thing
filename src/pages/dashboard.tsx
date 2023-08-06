@@ -1,7 +1,41 @@
 import { useAuth } from "@/components/AuthContext";
 import Authenticated from "@/components/Authenticated";
 import React from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function DashboardPage() {
-  return <Authenticated>you can see this if you are logged in</Authenticated>;
+  const {
+    session: { user },
+  } = useAuth();
+  return (
+    <Authenticated>
+      <div className="pt-32 pb-8 grid grid-cols-12 grid-rows-[fit-content(300px)_auto] min-h-screen">
+        <h1 className="col-start-3 col-span-2 text-5xl text-slate-800 py-16">
+          hey, <strong className="font-medium">{user?.name}</strong>
+        </h1>
+        <div
+          className="grid gap-6 grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))]
+        col-start-3 col-span-8 auto-rows-[200px]"
+        >
+          <Link href="/list/new">
+            <motion.div
+              initial={{
+                scale: 1,
+              }}
+              whileHover={{
+                scale: 1.05,
+              }}
+              transition={{ type: "spring" }}
+              className="from-slate-100 hover:drop-shadow-lg bg-[length:100%_200%] bg-bottom hover:bg-top  
+              transition-[background] delay-100 duration-300 ease-in-out bg-gradient-to-t from-50% to-50%
+               to-green-100 p-4 drop-shadow-md h-full rounded-xl flex justify-center items-center"
+            >
+              <h1 className="font-semibold text-slate-800 text-xl">create new</h1>
+            </motion.div>
+          </Link>
+        </div>
+      </div>
+    </Authenticated>
+  );
 }

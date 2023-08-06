@@ -51,14 +51,6 @@ export default function AuthProvider({ children }: React.PropsWithChildren) {
         refetch: async () => {
           try {
             await refetch();
-            setContext((_, { headers }) => {
-              return {
-                headers: {
-                  ...headers,
-                  authorization: data?.token,
-                },
-              };
-            });
           } catch (err) {}
         },
       }}

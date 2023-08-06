@@ -18,7 +18,6 @@ import CUSTOM_ERRORS from "@/graphql/errorCodes";
 const httpLink = new HttpLink({ uri: "/api/graphql" });
 const authLink = new ApolloLink((operation, forward) => {
   operation.setContext((context: DefaultContext) => {
-    console.log("got it" + context.token);
     return {
       headers: {
         ...context.headers,

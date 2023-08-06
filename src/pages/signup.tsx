@@ -17,6 +17,7 @@ export default function CreateAccountPage() {
   const router = useRouter();
   const {
     session: { authed },
+    refetch,
   } = useAuth();
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function CreateAccountPage() {
           validationSchema={toFormikValidationSchema(userSchema)}
           initialValues={{ name: "", password: "" }}
           onSubmit={async (val) => {
-            await submit(val, router);
+            await submit(val, router, refetch);
           }}
           isInitialValid={false}
           validate={validate}
@@ -109,7 +110,11 @@ async function validate(values: z.infer<typeof userSchema>) {
   };
 }
 
-async function submit(values: z.infer<typeof userSchema>, router: NextRouter) {
+async function submit(
+  values: z.infer<typeof userSchema>,
+  router: NextRouter,
+  refetchToken: () => Promise<void>,
+) {
   const { errors } = await client.mutate({
     mutation: createAccountMutation,
     variables: {
@@ -118,6 +123,7 @@ async function submit(values: z.infer<typeof userSchema>, router: NextRouter) {
     },
   });
   if (!errors) {
+    await refetchToken();
     router.push("/dashboard");
   }
 }

@@ -54,7 +54,6 @@ export function authorized<InputType>(
     // validate access token
     const user = await verifyAccessToken(ctx.req.headers.authorization);
     if (!user) {
-      console.log(user);
       throw new GraphQLError(...CUSTOM_ERRORS.INVALID_TOKEN);
     }
 
