@@ -26,7 +26,7 @@ const linksUnauthed = [
   },
   {
     label: "sign up",
-    href: "/signin",
+    href: "/signup",
   },
   {
     label: "log in",
@@ -68,21 +68,25 @@ export default function Navbar({ className }: Props) {
             </Link>
           </NavigationMenuItem>
         ))}
-        <NavigationMenuItem>
-          <Link href="settings" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              settings
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/account" legacyBehavior passHref>
-            <NavigationMenuLink className={twMerge(navigationMenuTriggerStyle(), "p-4")}>
-              account
-              <UserCircle2 strokeWidth={1.5} className="ml-2 w-5" />
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        {authed && (
+          <>
+            <NavigationMenuItem>
+              <Link href="settings" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  settings
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/account" legacyBehavior passHref>
+                <NavigationMenuLink className={twMerge(navigationMenuTriggerStyle(), "p-4")}>
+                  account
+                  <UserCircle2 strokeWidth={1.5} className="ml-2 w-5" />
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );
