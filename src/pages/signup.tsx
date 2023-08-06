@@ -17,9 +17,7 @@ export default function CreateAccountPage() {
   return (
     <div className="min-h-screen p-2 grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3">
-        <h1 className="text-2xl font-medium text-slate-950 text-center my-12">
-          create account
-        </h1>
+        <h1 className="text-2xl font-medium text-slate-950 text-center my-12">create account</h1>
 
         <Formik
           validationSchema={toFormikValidationSchema(userSchema)}
@@ -34,9 +32,7 @@ export default function CreateAccountPage() {
             return (
               <Form className="flex flex-col gap-4">
                 <div>
-                  <label className="block mb-1 text-slate-600 font-medium text-sm">
-                    username
-                  </label>
+                  <label className="block mb-1 text-slate-600 font-medium text-sm">username</label>
                   <TextInput
                     name="name"
                     className="w-full"
@@ -48,9 +44,7 @@ export default function CreateAccountPage() {
                   </label>
                 </div>
                 <div>
-                  <label className="block mb-1 text-slate-600 font-medium text-sm">
-                    password
-                  </label>
+                  <label className="block mb-1 text-slate-600 font-medium text-sm">password</label>
                   <TextInput
                     name="password"
                     type="password"
@@ -63,12 +57,6 @@ export default function CreateAccountPage() {
                   </label>
                 </div>
                 <div className="mt-4">
-                  {/* <Link
-                    href="/"
-                    className="text-sm text-slate-500 text-center mx-auto block mb-3 font-medium hover:text-sky-500"
-                  >
-                    don&apos;t have an account? create one here.
-                  </Link> */}
                   <Button className="w-full" color="green" type="submit">
                     create account
                   </Button>

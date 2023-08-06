@@ -1,7 +1,10 @@
-import { GetTokenQuery, User } from "@/graphql/types/graphql";
-import { gql, useQuery } from "@apollo/client";
+import { GetTokenQuery, LogoutMutation, User } from "@/graphql/types/graphql";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import jwt from "jsonwebtoken";
+import { getTokenQuery, logoutMutation } from "./graphql";
+import { setContext } from "@apollo/client/link/context";
+import { client } from "@/pages/_app";
 
 type AuthContext = {
   session: {
@@ -11,22 +14,20 @@ type AuthContext = {
   };
   loading: boolean;
   refetch: () => Promise<void>;
+  logout: () => Promise<void>;
 };
 const AuthContext = React.createContext<AuthContext>({
   session: { authed: false },
   loading: true,
   refetch: async () => {},
+  logout: async () => {},
 });
 
-const getTokenQuery = gql`
-  query GetToken {
-    token
-  }
-`;
 export default function AuthProvider({ children }: React.PropsWithChildren) {
   const { data, refetch, loading } = useQuery<GetTokenQuery>(getTokenQuery, {
     pollInterval: 10 * 60 * 1000,
   });
+  const [logout] = useMutation<LogoutMutation>(logoutMutation);
   let user: User | undefined = undefined;
   if (data) {
     user = jwt.decode(data.token) as User;
@@ -40,8 +41,20 @@ export default function AuthProvider({ children }: React.PropsWithChildren) {
           authed: !!data,
         },
         loading,
+        logout: async () => {
+          await logout();
+          client.resetStore();
+        },
         refetch: async () => {
           await refetch();
+          setContext((_, { headers }) => {
+            return {
+              headers: {
+                ...headers,
+                authorization: data?.token,
+              },
+            };
+          });
         },
       }}
     >

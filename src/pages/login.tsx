@@ -5,35 +5,30 @@ import Link from "next/link";
 import React from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { userSchema, User } from "@/types/formSchemas/userSchema";
-import {
-  MutationFunction,
-  MutationResult,
-  gql,
-  useMutation,
-} from "@apollo/client";
+import { MutationFunction, MutationResult, gql, useMutation } from "@apollo/client";
 import { client } from "./_app";
 import { NextRouter, useRouter } from "next/router";
-import { CUSTOM_ERR, CUSTOM_ERR_MSGS } from "@/graphql/errorCodes";
 import { LoginMutation } from "@/graphql/types/graphql";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/components/AuthContext";
+import CUSTOM_ERRORS from "@/graphql/errorCodes";
 
 export default function Login() {
   const [loginFn, loginState] = useMutation<LoginMutation>(loginMutation, {
     errorPolicy: "all",
   });
   const router = useRouter();
+  const { refetch } = useAuth();
   return (
     <div className="p-2 grow grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center min-h-screen">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3 relative overflow-clip">
-        <h1 className="text-2xl font-medium text-slate-950 text-center my-12">
-          log in
-        </h1>
+        <h1 className="text-2xl font-medium text-slate-950 text-center my-12">log in</h1>
 
         <Formik
           validationSchema={toFormikValidationSchema(userSchema)}
           initialValues={{ name: "", password: "" }}
           onSubmit={async (values, helpers) => {
-            await submit(values, helpers, router, loginFn, loginState);
+            await submit(values, helpers, router, loginFn, loginState, refetch);
           }}
         >
           {({ isSubmitting, errors, values, handleChange, touched }) => {
@@ -43,9 +38,7 @@ export default function Login() {
                   <div className="absolute top-0 bottom-0 left-0 right-0 bg-slate-50/60"></div>
                 )}
                 <div>
-                  <label className="block mb-1 text-slate-600 font-medium text-sm">
-                    username
-                  </label>
+                  <label className="block mb-1 text-slate-600 font-medium text-sm">username</label>
                   <TextInput
                     name="name"
                     className="w-full"
@@ -57,9 +50,7 @@ export default function Login() {
                   </label>
                 </div>
                 <div>
-                  <label className="block mb-1 text-slate-600 font-medium text-sm">
-                    password
-                  </label>
+                  <label className="block mb-1 text-slate-600 font-medium text-sm">password</label>
                   <TextInput
                     name="password"
                     type="password"
@@ -102,7 +93,8 @@ async function submit(
   { setErrors, setSubmitting }: FormikHelpers<User>,
   router: NextRouter,
   loginFn: MutationFunction<LoginMutation>,
-  loginState: MutationResult<LoginMutation>
+  loginState: MutationResult<LoginMutation>,
+  refetch: () => Promise<void>,
 ) {
   await new Promise((res) => setTimeout(res, 500));
   await loginFn({
@@ -115,21 +107,14 @@ async function submit(
   });
   setSubmitting(false);
 
-  if (
-    loginState.error?.graphQLErrors.some(
-      (e) => e.message === CUSTOM_ERR_MSGS.WR_PASS
-    )
-  ) {
+  if (loginState.error?.graphQLErrors.some((e) => e.message === CUSTOM_ERRORS.WR_PASS[0])) {
     setErrors({ password: "Incorrect password" });
   }
-  if (
-    loginState.error?.graphQLErrors.some(
-      (e) => e.message === CUSTOM_ERR_MSGS.NO_USER
-    )
-  ) {
+  if (loginState.error?.graphQLErrors.some((e) => e.message === CUSTOM_ERRORS.NO_USER[0])) {
     setErrors({ name: "User does not exist" });
   }
-  if (loginState.error?.graphQLErrors.length === 0) {
+  await refetch();
+  if (!loginState.error) {
     router.push("/dashboard");
   }
 }
