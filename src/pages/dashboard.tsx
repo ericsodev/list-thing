@@ -11,7 +11,7 @@ export default function DashboardPage() {
   return (
     <Authenticated>
       <div className="pt-32 pb-8 grid grid-cols-12 grid-rows-[fit-content(300px)_auto] min-h-screen">
-        <h1 className="col-start-3 col-span-2 text-5xl text-slate-800 py-16">
+        <h1 className="col-start-3 col-span-full text-5xl text-slate-800 py-16">
           hey, <strong className="font-medium">{user?.name}</strong>
         </h1>
         <div
@@ -26,12 +26,12 @@ export default function DashboardPage() {
               whileHover={{
                 scale: 1.05,
               }}
-              transition={{ type: "spring" }}
-              className="from-slate-100 hover:drop-shadow-lg bg-[length:100%_200%] bg-bottom hover:bg-top  
+              transition={{ type: "spring", bounce: 0.8, damping: 5 }}
+              className="shadow-sm border from-card bg-[length:100%_200%] bg-bottom hover:bg-top  
               transition-[background] delay-100 duration-300 ease-in-out bg-gradient-to-t from-50% to-50%
-               to-green-100 p-4 drop-shadow-md h-full rounded-xl flex justify-center items-center"
+               to-green-100 p-4 h-full rounded-xl flex justify-center items-center text-card-foreground"
             >
-              <h1 className="font-semibold text-slate-800 text-xl">create new</h1>
+              <h1 className="font-medium text-xl">create new</h1>
             </motion.div>
           </Link>
         </div>

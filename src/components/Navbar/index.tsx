@@ -1,10 +1,38 @@
 import Link from "next/link";
 import React from "react";
 import { twMerge } from "tailwind-merge";
-import Dropdown from "./Dropdown";
-import { linksAuthed, linksUnauthed } from "./links";
 import { useAuth } from "../AuthContext";
-import Image from "next/image";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "../ui/navigation-menu";
+import { UserCircle2 } from "lucide-react";
+
+const linksAuthed = [
+  {
+    label: "dashboard",
+    href: "/dashboard",
+  },
+];
+const linksUnauthed = [
+  {
+    label: "about",
+    href: "/about",
+  },
+  {
+    label: "sign up",
+    href: "/signin",
+  },
+  {
+    label: "log in",
+    href: "/login",
+  },
+];
 
 type Props = {
   className?: string;
@@ -15,37 +43,47 @@ export default function Navbar({ className }: Props) {
     logout,
   } = useAuth();
 
-  const linkStyle =
-    "sm:text-lg font-medium border-transparent hover:text-slate-800 text-slate-700 p-0.5 sm:p-1 hover:border-green-400 border-b-2 box-border";
   return (
-    <div
-      className={twMerge(
-        "w-full z-30 overflow-visible overflow-y-visible flex p-6 from-slate-800/10 to-transparent bg-gradient-to-b",
-        className,
-      )}
-    >
-      <Link href="/" className="text-3xl text-slate-800 font-semibold self-start">
-        <text className="text-green-300 font-bold">list</text>-thing
-      </Link>
-      <Dropdown className="ml-auto md:hidden"></Dropdown>
-      <div className="grow md:flex justify-center gap-10 self-center hidden">
-        {(authed ? linksAuthed : linksUnauthed).map((link) => (
-          <Link key={link.href} href={link.href} className={linkStyle}>
-            {link.label}
+    <NavigationMenu className={twMerge("p-3 flex w-full max-w-full", className)}>
+      <NavigationMenuList className="">
+        <NavigationMenuItem>
+          <Link href="/" legacyBehavior passHref>
+            <NavigationMenuLink
+              className={twMerge(
+                navigationMenuTriggerStyle({ className: "hover:scale-105 transition-transform" }),
+                "font-medium text-lg",
+              )}
+            >
+              <strong className="font-semibold text-primary">list</strong>-thing
+            </NavigationMenuLink>
           </Link>
+        </NavigationMenuItem>
+
+        {(authed ? linksAuthed : linksUnauthed).map((link) => (
+          <NavigationMenuItem key={link.href}>
+            <Link href={link.href} legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                {link.label}
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
         ))}
-      </div>
-      <Image
-        onClick={async () => {
-          await logout();
-        }}
-        width={64}
-        height={64}
-        priority={true}
-        className="w-10 h-10 rounded-full"
-        alt="profile picture"
-        src="https://ui-avatars.com/api/?background=random&color=fff&rounded=true?size=512&bold=true&name=eric"
-      ></Image>
-    </div>
+        <NavigationMenuItem>
+          <Link href="settings" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              settings
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="/account" legacyBehavior passHref>
+            <NavigationMenuLink className={twMerge(navigationMenuTriggerStyle(), "p-4")}>
+              account
+              <UserCircle2 strokeWidth={1.5} className="ml-2 w-5" />
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 }
