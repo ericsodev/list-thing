@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as types from "./graphql";
-import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
+import * as types from './graphql';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 
 /**
  * Map of all GraphQL operations in the project.
@@ -15,14 +15,11 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
 const documents = {
     "\n  query GetToken {\n    token\n  }\n": types.GetTokenDocument,
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
-    '\n  query GetListQuery {\n    list(id: "sdfsdf") {\n      name\n    }\n  }\n':
-        types.GetListQueryDocument,
-    "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n":
-        types.LoginDocument,
-    "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n":
-        types.CreateAccountDocument,
-    "\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n":
-        types.SearchUserDocument,
+    "\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n": types.GetListDocument,
+    "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n": types.CreateListDocument,
+    "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n": types.LoginDocument,
+    "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n": types.CreateAccountDocument,
+    "\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n": types.SearchUserDocument,
 };
 
 /**
@@ -42,43 +39,34 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(
-    source: "\n  query GetToken {\n    token\n  }\n",
-): (typeof documents)["\n  query GetToken {\n    token\n  }\n"];
+export function graphql(source: "\n  query GetToken {\n    token\n  }\n"): (typeof documents)["\n  query GetToken {\n    token\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(
-    source: "\n  mutation Logout {\n    logout\n  }\n",
-): (typeof documents)["\n  mutation Logout {\n    logout\n  }\n"];
+export function graphql(source: "\n  mutation Logout {\n    logout\n  }\n"): (typeof documents)["\n  mutation Logout {\n    logout\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(
-    source: '\n  query GetListQuery {\n    list(id: "sdfsdf") {\n      name\n    }\n  }\n',
-): (typeof documents)['\n  query GetListQuery {\n    list(id: "sdfsdf") {\n      name\n    }\n  }\n'];
+export function graphql(source: "\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n"): (typeof documents)["\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(
-    source: "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n",
-): (typeof documents)["\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n"];
+export function graphql(source: "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(
-    source: "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n",
-): (typeof documents)["\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n"];
+export function graphql(source: "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n"): (typeof documents)["\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(
-    source: "\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n",
-): (typeof documents)["\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n"];
+export function graphql(source: "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n"): (typeof documents)["\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n"): (typeof documents)["\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n"];
 
 export function graphql(source: string) {
-    return (documents as any)[source] ?? {};
+  return (documents as any)[source] ?? {};
 }
 
-export type DocumentType<TDocumentNode extends DocumentNode<any, any>> =
-    TDocumentNode extends DocumentNode<infer TType, any> ? TType : never;
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;
