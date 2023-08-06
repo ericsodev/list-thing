@@ -20,11 +20,9 @@ export default function CreateAccountPage() {
     refetch,
   } = useAuth();
 
-  useEffect(() => {
-    if (authed) {
-      router.push("/dashboard");
-    }
-  }, [router, authed]);
+  if (authed) {
+    router.push("/dashboard");
+  }
   return (
     <div className="min-h-screen p-2 grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3">

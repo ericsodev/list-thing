@@ -21,6 +21,10 @@ export default function Login() {
     session: { authed },
   } = useAuth();
 
+  if (authed) {
+    router.push("/dashboard");
+  }
+
   return (
     <div className="p-2 grow grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center min-h-screen">
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3 relative overflow-clip">
