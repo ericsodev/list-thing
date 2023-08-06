@@ -37,6 +37,7 @@ const resolver = {
       }
 
       if (!(await bcrypt.compare(args.input.password, user.encryptedPass))) {
+        console.log("oh no");
         throw new GraphQLError(...CUSTOM_ERRORS.WR_PASS);
       }
 
@@ -103,7 +104,7 @@ const resolver = {
     logout: async (_: any, _args: any, ctx: Context) => {
       ctx.res.setHeader(
         "Set-Cookie",
-        serialize("referesh-token", "", { path: "/", httpOnly: true }),
+        serialize("refresh-token", "", { path: "/", httpOnly: true }),
       );
     },
   },

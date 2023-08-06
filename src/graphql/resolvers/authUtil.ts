@@ -52,8 +52,9 @@ export function authorized<InputType>(
     }
 
     // validate access token
-    const user = await verifyRefreshToken(ctx.req.headers.authorization);
+    const user = await verifyAccessToken(ctx.req.headers.authorization);
     if (!user) {
+      console.log(user);
       throw new GraphQLError(...CUSTOM_ERRORS.INVALID_TOKEN);
     }
 
@@ -61,7 +62,6 @@ export function authorized<InputType>(
     const userDb = await ctx.prisma.user.findUnique({
       where: {
         id: user.id,
-        name: user.name,
       },
       select: {
         id: true,
