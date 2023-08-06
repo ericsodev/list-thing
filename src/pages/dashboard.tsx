@@ -3,11 +3,24 @@ import Authenticated from "@/components/Authenticated";
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import ListCard from "@/components/dashboard/ListCard";
+import gql from "graphql-tag";
+import { useAuthedQuery } from "@/hooks/useAuthRequest";
+
+const getLists = gql`
+  query GetLists {
+    lists {
+      id
+      name
+    }
+  }
+`;
 
 export default function DashboardPage() {
   const {
     session: { user },
   } = useAuth();
+  const { data } = useAuthedQuery(getLists);
   return (
     <Authenticated>
       <div className="pt-32 pb-8 grid grid-cols-12 grid-rows-[fit-content(300px)_auto] min-h-screen">
