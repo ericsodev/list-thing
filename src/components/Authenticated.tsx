@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "./AuthContext";
 import { useRouter } from "next/router";
+import { Progress } from "@radix-ui/react-progress";
 
 export default function Authenticated({ children }: React.PropsWithChildren): React.ReactNode {
   const {
@@ -8,13 +9,17 @@ export default function Authenticated({ children }: React.PropsWithChildren): Re
     session: { authed, token },
   } = useAuth();
   const router = useRouter();
-  if (loading) return <div>loading</div>;
-  else if (authed && token !== undefined) {
-    console.log("returning ur children");
-    return <div className="weirdclassname">{children}</div>;
-  }
-  router.push("/login");
-  return <div>you are not logged in</div>;
+  if (!loading && !authed) router.push("/login");
+  return (
+    <>
+      {loading && (
+        <div className="w-full h-full absolute z-50 inset-y-0 inset-x-0 animate-bounce flex justify-center items-center">
+          <Progress value={50} className="w-1/3"></Progress>
+        </div>
+      )}
+      {authed && <div className="weirdclassname">{children}</div>}
+    </>
+  );
 }
 
 export function getAuthLayout(page: React.ReactElement) {
