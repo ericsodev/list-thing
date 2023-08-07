@@ -17,6 +17,7 @@ const getLists = gql`
       id
       name
       memberCount
+      itemCount
     }
   }
 `;

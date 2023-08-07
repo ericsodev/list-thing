@@ -23,6 +23,7 @@ model User {
 
 model List {
   id        String     @unique @default(uuid())
+  slug      String     @unique @default(cuid())
   ListUser  ListUser[]
   item      Item[]
   name      String
@@ -43,6 +44,7 @@ model ListUser {
 
 model Item {
   id        String    @unique @default(uuid())
+  slug      String    @unique @default(cuid())
   createdOn DateTime  @default(now())
   name      String
   list      List      @relation(fields: [listId], references: [id], onDelete: Cascade)
