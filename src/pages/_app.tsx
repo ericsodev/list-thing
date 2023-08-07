@@ -11,10 +11,15 @@ import {
 } from "@apollo/client";
 import Navbar from "@/components/Navbar";
 import AuthProvider from "@/components/AuthContext";
-import { setContext } from "@apollo/client/link/context";
-import { onError } from "@apollo/client/link/error";
-import CUSTOM_ERRORS from "@/graphql/errorCodes";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import { NextPage } from "next";
+import { ReactElement, ReactNode } from "react";
+
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
 
 const httpLink = new HttpLink({ uri: "/api/graphql" });
 const authLink = new ApolloLink((operation, forward) => {
@@ -34,29 +39,15 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// const errorLink = onError(({ graphQLErrors, networkError }) => {
-//   if (
-//     graphQLErrors?.some((error) =>
-//       [
-//         CUSTOM_ERRORS.UNAUTHORIZED[0],
-//         CUSTOM_ERRORS.NO_TOKEN[0],
-//         CUSTOM_ERRORS.INVALID_TOKEN[0],
-//       ].includes(error.message),
-//     )
-//   ) {
-//     // either no access token or invalid access token
-//   }
-// });
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
 
-export default function App({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
-      <ErrorBoundary>
-        <AuthProvider>
-          <Navbar className="top-0 left-0 fixed"></Navbar>
-          <Component {...pageProps} />
-        </AuthProvider>
-      </ErrorBoundary>
+      <AuthProvider>
+        <Navbar className="top-0 left-0 fixed"></Navbar>
+        {getLayout(<Component {...pageProps}></Component>)}
+      </AuthProvider>
     </ApolloProvider>
   );
 }

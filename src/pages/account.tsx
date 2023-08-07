@@ -1,6 +1,6 @@
+import { getAuthLayout } from "@/components/Authenticated";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 export default function Account(): React.ReactNode {
   return (
@@ -20,3 +20,5 @@ export default function Account(): React.ReactNode {
     </div>
   );
 }
+
+Account.layout = getAuthLayout;

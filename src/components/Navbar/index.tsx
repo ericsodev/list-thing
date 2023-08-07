@@ -71,7 +71,7 @@ export default function Navbar({ className }: Props) {
         {authed && (
           <>
             <NavigationMenuItem>
-              <Link href="settings" legacyBehavior passHref>
+              <Link href="/settings" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   settings
                 </NavigationMenuLink>

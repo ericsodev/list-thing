@@ -17,6 +17,7 @@ const documents = {
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
     "\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n": types.GetListDocument,
     "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n": types.CreateListDocument,
+    "\n  query GetLists {\n    lists {\n      id\n      name\n    }\n  }\n": types.GetListsDocument,
     "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n": types.LoginDocument,
     "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n": types.CreateAccountDocument,
     "\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n": types.SearchUserDocument,
@@ -52,6 +53,10 @@ export function graphql(source: "\n  query GetList {\n    list(id: \"sdfsdf\") {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetLists {\n    lists {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  query GetLists {\n    lists {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
