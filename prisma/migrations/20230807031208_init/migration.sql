@@ -12,6 +12,7 @@ CREATE TABLE `User` (
 CREATE TABLE `List` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
+    `createdOn` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `List_id_key`(`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -29,14 +30,14 @@ CREATE TABLE `ListUser` (
 -- CreateTable
 CREATE TABLE `Item` (
     `id` VARCHAR(191) NOT NULL,
-    `dateAdded` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdOn` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `name` VARCHAR(191) NOT NULL,
     `listId` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `likes` INTEGER NOT NULL DEFAULT 0,
 
     UNIQUE INDEX `Item_id_key`(`id`),
-    INDEX `Item_listId_dateAdded_idx`(`listId`, `dateAdded`)
+    INDEX `Item_listId_createdOn_idx`(`listId`, `createdOn`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -60,13 +61,13 @@ CREATE TABLE `Tag` (
 -- CreateTable
 CREATE TABLE `Comment` (
     `id` VARCHAR(191) NOT NULL,
-    `dateAdded` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdOn` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `text` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `itemId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `Comment_id_key`(`id`),
-    INDEX `Comment_itemId_dateAdded_idx`(`itemId`, `dateAdded`)
+    INDEX `Comment_itemId_createdOn_idx`(`itemId`, `createdOn`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -78,10 +79,10 @@ CREATE TABLE `RefreshToken` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `ListUser` ADD CONSTRAINT `ListUser_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ListUser` ADD CONSTRAINT `ListUser_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ListUser` ADD CONSTRAINT `ListUser_listId_fkey` FOREIGN KEY (`listId`) REFERENCES `List`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ListUser` ADD CONSTRAINT `ListUser_listId_fkey` FOREIGN KEY (`listId`) REFERENCES `List`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Item` ADD CONSTRAINT `Item_listId_fkey` FOREIGN KEY (`listId`) REFERENCES `List`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

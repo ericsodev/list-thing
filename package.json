@@ -15,6 +15,7 @@
     "@apollo/server": "^4.7.5",
     "@as-integrations/next": "^2.0.1",
     "@fontsource/poppins": "^5.0.5",
+    "@formkit/auto-animate": "^0.7.0",
     "@graphql-tools/merge": "^9.0.0",
     "@headlessui/react": "^1.7.16",
     "@prisma/client": "^4.15.0",

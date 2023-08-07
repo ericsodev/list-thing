@@ -21,10 +21,14 @@ const typeDefs = gql`
   type List {
     id: ID!
     name: String!
+    createdOn: DateTime!
     members: [User!]!
     owner: [User!]!
     items: [Item!]!
     tags: [Tag!]!
+    memberCount: Int!
+    tagCount: Int!
+    itemCount: Int!
   }
 
   type ListUser {
@@ -143,6 +147,7 @@ const typeDefs = gql`
     authenticate(input: AuthenticationInput!): String
     createAccount(input: CreateUserInput!): Boolean!
     createList(name: String!, tags: [String!]): List!
+    deleteList(id: ID!): Boolean!
     addItem(input: AddItemInput!): Item!
     removeItem(input: AddItemInput!): Boolean
     logout: Boolean

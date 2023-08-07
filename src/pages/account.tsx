@@ -1,8 +1,10 @@
+import { useAuth } from "@/components/AuthContext";
 import { getAuthLayout } from "@/components/Authenticated";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Account(): React.ReactNode {
+  const { logout } = useAuth();
   return (
     <div className="w-full h-screen flex justify-center items-center">
       <div className="relative">
@@ -14,6 +16,13 @@ export default function Account(): React.ReactNode {
             className="-bottom-[calc(100%+2rem)] absolute inset-x-0 w-full"
           >
             head back home
+          </Button>
+          <Button
+            onClick={logout}
+            variant={"outline"}
+            className="-bottom-[calc(200%+3rem)] absolute inset-x-0 w-full"
+          >
+            logout
           </Button>
         </Link>
       </div>

@@ -1,17 +1,20 @@
-import { MutationCreateListArgs, QueryListArgs, QueryListsArgs } from "../types/graphql";
+import {
+  MutationCreateListArgs,
+  MutationDeleteListArgs,
+  QueryListArgs,
+  QueryListsArgs,
+} from "../types/graphql";
 import { authorized } from "./authUtil";
 import { nullsToUndefined } from "../util/parse";
 
 const resolver = {
   Query: {
     lists: authorized<QueryListsArgs>(async (_p, args, ctx) => {
-      return await ctx.prisma.list.findMany({
+      let result = await ctx.prisma.list.findMany({
         where: {
           ListUser: {
             some: {
-              user: {
-                id: ctx.user.id,
-              },
+              userId: ctx.user.id,
             },
           },
           name: nullsToUndefined(args.input?.filter?.name),
@@ -21,6 +24,15 @@ const resolver = {
         orderBy: nullsToUndefined(args.input?.sort),
         select: {
           id: true,
+          name: true,
+          createdOn: true,
+          _count: {
+            select: {
+              ListUser: true,
+              item: true,
+              Tag: true,
+            },
+          },
           item: {
             where: {
               createdOn: nullsToUndefined(args.input?.item?.createdOn),
@@ -40,15 +52,19 @@ const resolver = {
           },
         },
       });
+      return result.map((l) => ({
+        ...l,
+        memberCount: l._count.ListUser,
+        itemCount: l._count.item,
+        tagCount: l._count.Tag,
+      }));
     }),
     list: authorized<QueryListArgs>(async (_p, args, ctx) => {
       return await ctx.prisma.list.findMany({
         where: {
           ListUser: {
             some: {
-              user: {
-                id: ctx.user.id,
-              },
+              userId: ctx.user.id,
             },
           },
           id: args.id,
@@ -77,6 +93,16 @@ const resolver = {
       return await ctx.prisma.list.create({
         data: {
           name: args.name,
+          ListUser: {
+            create: {
+              role: "OWNER",
+              user: {
+                connect: {
+                  id: ctx.user.id,
+                },
+              },
+            },
+          },
           Tag: {
             createMany: {
               data:
@@ -93,6 +119,22 @@ const resolver = {
           name: true,
         },
       });
+    }),
+    deleteList: authorized<MutationDeleteListArgs>(async (_p, args, ctx) => {
+      const res = await ctx.prisma.list.deleteMany({
+        where: {
+          id: args.id,
+          ListUser: {
+            some: {
+              AND: {
+                userId: ctx.user.id,
+                role: "OWNER",
+              },
+            },
+          },
+        },
+      });
+      return res.count > 0;
     }),
   },
 };

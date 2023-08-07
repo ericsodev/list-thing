@@ -15,9 +15,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
     "\n  query GetToken {\n    token\n  }\n": types.GetTokenDocument,
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
+    "\n  mutation deleteList($id: ID!) {\n    deleteList(id: $id)\n  }\n": types.DeleteListDocument,
     "\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n": types.GetListDocument,
     "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n": types.CreateListDocument,
-    "\n  query GetLists {\n    lists {\n      id\n      name\n    }\n  }\n": types.GetListsDocument,
+    "\n  query GetLists {\n    lists {\n      id\n      name\n      memberCount\n    }\n  }\n": types.GetListsDocument,
     "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n": types.LoginDocument,
     "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n": types.CreateAccountDocument,
     "\n  query searchUser($input: UserSearchInput!) {\n    users(input: $input) {\n      name\n    }\n  }\n": types.SearchUserDocument,
@@ -48,6 +49,10 @@ export function graphql(source: "\n  mutation Logout {\n    logout\n  }\n"): (ty
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  mutation deleteList($id: ID!) {\n    deleteList(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteList($id: ID!) {\n    deleteList(id: $id)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n"): (typeof documents)["\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -56,7 +61,7 @@ export function graphql(source: "\n  mutation CreateList($name: String!, $tags: 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetLists {\n    lists {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  query GetLists {\n    lists {\n      id\n      name\n    }\n  }\n"];
+export function graphql(source: "\n  query GetLists {\n    lists {\n      id\n      name\n      memberCount\n    }\n  }\n"): (typeof documents)["\n  query GetLists {\n    lists {\n      id\n      name\n      memberCount\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
