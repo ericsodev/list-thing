@@ -2,10 +2,13 @@ import {
   MutationCreateListArgs,
   MutationDeleteListArgs,
   QueryListArgs,
+  QueryListSlugArgs,
   QueryListsArgs,
 } from "../types/graphql";
 import { authorized } from "./authUtil";
 import { nullsToUndefined } from "../util/parse";
+import { GraphQLError } from "graphql";
+import CUSTOM_ERRORS from "../errorCodes";
 
 const resolver = {
   Query: {
@@ -24,6 +27,7 @@ const resolver = {
         orderBy: nullsToUndefined(args.input?.sort),
         select: {
           id: true,
+          slug: true,
           name: true,
           createdOn: true,
           _count: {
@@ -71,9 +75,36 @@ const resolver = {
         },
         select: {
           id: true,
+          item: true,
+        },
+      });
+    }),
+    listSlug: authorized<QueryListSlugArgs>(async (_p, args, ctx) => {
+      let result = await ctx.prisma.list.findUnique({
+        where: {
+          slug: args.slug,
+        },
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          createdOn: true,
+          _count: {
+            select: {
+              ListUser: true,
+              item: true,
+              Tag: true,
+            },
+          },
+          ListUser: {
+            where: {
+              userId: ctx.user.id,
+            },
+          },
           item: {
             select: {
               id: true,
+              status: true,
               name: true,
               likes: true,
               createdOn: true,
@@ -86,6 +117,16 @@ const resolver = {
           },
         },
       });
+      if (!result) return null;
+      if (!result.ListUser.some((user) => user.userId === ctx.user.id))
+        throw new GraphQLError(...CUSTOM_ERRORS.FORBIDDEN);
+      return {
+        ...result,
+        memberCount: result._count.ListUser,
+        itemCount: result._count.item,
+        tagCount: result._count.Tag,
+        items: result.item,
+      };
     }),
   },
   Mutation: {

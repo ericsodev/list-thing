@@ -13,6 +13,12 @@ const typeDefs = gql`
     desc
   }
 
+  enum STATUS {
+    ACTIVE
+    BACKLOG
+    COMPLETE
+  }
+
   type User {
     id: ID!
     name: String!
@@ -21,6 +27,7 @@ const typeDefs = gql`
   type List {
     id: ID!
     name: String!
+    slug: String!
     createdOn: DateTime!
     members: [User!]!
     owner: [User!]!
@@ -54,11 +61,13 @@ const typeDefs = gql`
   type Item {
     id: ID!
     name: String!
+    slug: String!
     tagItems: [TagItem!]!
     adder: User!
     list: List!
     date: DateTime!
     comments: [Comment!]!
+    status: STATUS!
   }
 
   type Tag {
@@ -134,9 +143,16 @@ const typeDefs = gql`
     tags: [String!]
   }
 
+  input TagSearchInput {
+    name: StringFilter
+    listId: ID!
+  }
+
   type Query {
     lists(input: ListInput): [List!]!
     list(id: ID!): List
+    tagSearch(input: TagSearchInput): [String!]!
+    listSlug(slug: String!): List
     users(input: UserSearchInput!): [User!]!
     user(name: String, id: String): User
     token: String!
