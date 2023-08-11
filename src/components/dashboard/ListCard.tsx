@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { GetListsQuery } from "@/graphql/types/graphql";
-import { Trash2 } from "lucide-react";
+import { Maximize2, Trash2 } from "lucide-react";
 import { gql } from "@apollo/client";
 import { useAuthedMutation } from "@/hooks/useAuthRequest";
 import {
@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useRouter } from "next/router";
 
 type Props = { refetch: () => Promise<any> };
 type List = GetListsQuery["lists"][0];
@@ -27,10 +28,21 @@ const deleteList = gql`
 
 export default function ListCard({ name, id, refetch, ...props }: Props & List) {
   const [deleteFn] = useAuthedMutation(deleteList, { variables: { id }, onCompleted: refetch });
+  const router = useRouter();
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col overflow-clip">
       <CardHeader>
-        <CardTitle className="font-medium text-card-foreground/80">{name}</CardTitle>
+        <span className="flex justify-between group">
+          <CardTitle className="font-medium text-card-foreground/80">{name}</CardTitle>
+          <div
+            onClick={() => {
+              router.push(`/list/${props.slug}`);
+            }}
+            className="p-1 translate-x-1 duration-75 group-hover:translate-x-0 transition-all bg-muted/70 group-hover:visible invisible rounded-md border-muted-foreground/10 border"
+          >
+            <Maximize2 strokeWidth={2.2} className="text-muted-foreground/90 w-4 h-4 "></Maximize2>
+          </div>
+        </span>
       </CardHeader>
       <CardContent className="grow">
         <ul className="list-none">
