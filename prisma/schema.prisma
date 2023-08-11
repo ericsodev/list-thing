@@ -19,6 +19,8 @@ model User {
   ListUser      ListUser[]
   comment       Comment[]
   Item          Item[]
+
+  @@fulltext([name])
 }
 
 model List {
@@ -29,6 +31,8 @@ model List {
   name      String
   Tag       Tag[]
   createdOn DateTime   @default(now())
+
+  @@fulltext([name])
 }
 
 model ListUser {
@@ -54,8 +58,10 @@ model Item {
   userId    String
   likes     Int       @default(0)
   ItemTag   ItemTag[]
+  status    STATUS    @default(ACTIVE)
 
   @@index([listId, createdOn])
+  @@fulltext([name])
 }
 
 model ItemTag {
@@ -74,6 +80,8 @@ model Tag {
   listId  String
   name    String
   ItemTag ItemTag[]
+
+  @@fulltext([name])
 }
 
 model Comment {
@@ -86,6 +94,7 @@ model Comment {
   itemId    String
 
   @@index([itemId, createdOn])
+  @@fulltext([text])
 }
 
 model RefreshToken {
@@ -99,4 +108,10 @@ model RefreshToken {
 enum ROLE {
   OWNER
   MEMBER
+}
+
+enum STATUS {
+  BACKLOG
+  COMPLETE
+  ACTIVE
 }
