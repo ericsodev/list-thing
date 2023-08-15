@@ -10,6 +10,7 @@ import { NextRouter, useRouter } from "next/router";
 import { LoginMutation } from "@/graphql/types/graphql";
 import { useAuth } from "@/components/AuthContext";
 import CUSTOM_ERRORS from "@/graphql/errorCodes";
+import Head from "next/head";
 
 export default function Login() {
   const [loginFn, loginState] = useMutation<LoginMutation>(loginMutation, {
@@ -27,6 +28,9 @@ export default function Login() {
 
   return (
     <div className="p-2 grow grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center min-h-screen">
+      <Head>
+        <title>list-thing | login</title>
+      </Head>
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3 relative overflow-clip">
         <h1 className="text-2xl font-medium text-slate-950 text-center my-12">log in</h1>
 

@@ -12,6 +12,7 @@ import { CreateListMutation } from "@/graphql/types/graphql";
 import { NextRouter, useRouter } from "next/router";
 import Authenticated from "@/components/Authenticated";
 import { useAuthedMutation } from "@/hooks/useAuthRequest";
+import Head from "next/head";
 
 export default function NewListPage(): React.ReactNode {
   const [tagInput, setTagInput] = useState<string>("");
@@ -21,6 +22,9 @@ export default function NewListPage(): React.ReactNode {
   return (
     <Authenticated>
       <div className="pt-28 grid grid-cols-[1fr_auto_1fr] grid-rows-[1fr_auto_2fr] h-screen">
+        <Head>
+          <title>list-thing | new list</title>
+        </Head>
         <Formik
           initialValues={{ name: "", tags: [] as string[] }}
           onSubmit={handleSubmit(createFn, router)}
@@ -30,7 +34,7 @@ export default function NewListPage(): React.ReactNode {
             <AnimatePresence>
               <motion.div
                 transition={{ type: "spring" }}
-                className="row-start-2 transition-all h-auto col-start-2 bg-slate-100 pb-8 px-10 rounded-md w-96"
+                className="row-start-2 transition-all h-auto col-start-2 bg-muted pb-8 px-10 rounded-md w-96"
               >
                 <Form className="h-full" autoComplete="off">
                   <h1 className="text-2xl font-medium text-slate-950 text-center my-12">

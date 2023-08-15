@@ -1,12 +1,16 @@
 import { useAuth } from "@/components/AuthContext";
 import { getAuthLayout } from "@/components/Authenticated";
 import { Button } from "@/components/ui/button";
+import Head from "next/head";
 import Link from "next/link";
 
 export default function Account(): React.ReactNode {
   const { logout } = useAuth();
   return (
     <div className="w-full h-screen flex justify-center items-center">
+      <Head>
+        <title>list-thing | account</title>
+      </Head>
       <div className="relative">
         <h3 className="text-xl absolute -top-3/4">you&apos;re early</h3>
         <h1 className="text-4xl font-medium">coming soon</h1>

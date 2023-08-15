@@ -12,6 +12,7 @@ import { SearchUserQuery } from "@/graphql/types/graphql";
 import { userSchema } from "@/types/formSchemas/userSchema";
 import { NextRouter, useRouter } from "next/router";
 import { useAuth } from "@/components/AuthContext";
+import Head from "next/head";
 
 export default function CreateAccountPage() {
   const router = useRouter();
@@ -25,6 +26,9 @@ export default function CreateAccountPage() {
   }
   return (
     <div className="min-h-screen p-2 grid grid-cols-[1fr_minmax(auto,_500px)_1fr] w-full items-center">
+      <Head>
+        <title>list-thing | signup</title>
+      </Head>
       <div className="bg-slate-100 px-8 md:px-16 pb-10 rounded-md col-start-2 col-end-3">
         <h1 className="text-2xl font-medium text-slate-950 text-center my-12">create account</h1>
 

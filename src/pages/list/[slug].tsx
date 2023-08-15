@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import ListContextProvider from "@/components/listPage/listContext";
 import NewItem from "@/components/listPage/newItem";
 import CommandPalette from "@/components/listPage/CommandPalette/commandPalette";
+import Head from "next/head";
 
 const getList = gql`
   query ListBySlug($slug: String!) {
@@ -41,7 +42,7 @@ function ListPage() {
     pollInterval: 60 * 1000,
     fetchPolicy: "cache-and-network",
   });
-  if (error || (!list?.listSlug && !loading)) {
+  if (error || ((!list || !list?.listSlug) && !loading)) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <div className="relative">
@@ -60,7 +61,10 @@ function ListPage() {
     );
   }
   return (
-    <div className="pt-32 pb-8 grid grid-cols-12 grid-rows-[fit-content(300px)_auto] min-h-screen">
+    <div className="pt-32 pb-8 grid grid-cols-[auto_1fr_auto] min-h-screen">
+      <Head>
+        <title>{list?.listSlug?.name || "Loading List"}</title>
+      </Head>
       <ListContextProvider
         value={{
           list,
@@ -71,17 +75,23 @@ function ListPage() {
         }}
       >
         <CommandPalette></CommandPalette>
-        <h1 className="col-start-3 col-span-full text-5xl text-slate-800 py-16 font-medium">
-          {list?.listSlug && list.listSlug.name}
+        <div className="col-start-2 col-span-1 flex flex-col items-center">
+          {!loading && (
+            <>
+              <h1 className="text-5xl text-slate-800 py-16 font-medium">
+                {list?.listSlug && list.listSlug.name}
 
-          {loading && <Skeleton className="w-28 h-[20px] rounded-full" />}
-        </h1>
-        <div className="col-start-3 col-end-12 grid grid-cols-[minmax(400px,_auto)_auto] auto-rows-auto">
-          <div className="col-span-1">
-            <NewItem className="w-80"></NewItem>
-            <h1 className="">your list is empty</h1>
-          </div>
-          <div></div>
+                {loading && <Skeleton className="w-28 h-[20px] rounded-full" />}
+              </h1>
+              <div className="mt-4">
+                {list?.listSlug && list?.listSlug?.items.length > 0 ? (
+                  <ul>{list?.listSlug?.items.map((item) => <li key={item.id}>{item.name}</li>)}</ul>
+                ) : (
+                  <h1 className="text-lg text-muted-foreground">your list is empty</h1>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </ListContextProvider>
     </div>

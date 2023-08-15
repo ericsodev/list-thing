@@ -10,6 +10,7 @@ import { GetListsQuery } from "@/graphql/types/graphql";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import Head from "next/head";
 
 const getLists = gql`
   query GetLists {
@@ -38,6 +39,9 @@ function DashboardPage() {
   const [parent] = useAutoAnimate();
   return (
     <div className="pt-32 pb-8 grid grid-cols-12 grid-rows-[fit-content(300px)_auto] min-h-screen">
+      <Head>
+        <title>dashboard</title>
+      </Head>
       <h1 className="col-start-3 col-span-full text-5xl text-slate-800 py-16">
         hey, <strong className="font-medium">{user?.name}</strong>
       </h1>

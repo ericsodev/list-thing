@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -20,6 +21,9 @@ const features = [
 export default function HomePage() {
   return (
     <div className="min-h-screen grid grid-cols-12 gap-10 sm:gap-4 pt-28 px-12 w-screen">
+      <Head>
+        <title>list-thing</title>
+      </Head>
       <div className="pb-16 md:pb-0 md:col-start-3 col-span-full md:col-span-10 flex flex-col justify-center relative">
         <h1 className="text-5xl sm:text-6xl text-slate-800">
           <strong className="text-primary font-semibold">lists</strong> for everything, everywhere
