@@ -2,7 +2,6 @@ import { useAuth } from "@/components/AuthContext";
 import { useMutation, useQuery } from "@apollo/client";
 
 export function useAuthedQuery<T>(...params: Parameters<typeof useQuery<T>>) {
-  console.log("fired");
   const {
     session: { token },
   } = useAuth();
