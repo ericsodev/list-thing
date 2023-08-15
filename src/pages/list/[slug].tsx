@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ListContextProvider from "@/components/listPage/listContext";
 import NewItem from "@/components/listPage/newItem";
+import CommandPalette from "@/components/listPage/CommandPalette/commandPalette";
 
 const getList = gql`
   query ListBySlug($slug: String!) {
@@ -69,6 +70,7 @@ function ListPage() {
           loading,
         }}
       >
+        <CommandPalette></CommandPalette>
         <h1 className="col-start-3 col-span-full text-5xl text-slate-800 py-16 font-medium">
           {list?.listSlug && list.listSlug.name}
 
