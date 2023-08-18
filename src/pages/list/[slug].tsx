@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ListContextProvider from "@/components/listPage/listContext";
 import NewItem from "@/components/listPage/newItem";
-import CommandPalette from "@/components/listPage/CommandPalette/CommandPalette";
+import CommandPalette from "@/components/listPage/CommandPalette";
 import Head from "next/head";
 
 const getList = gql`

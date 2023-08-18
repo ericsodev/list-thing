@@ -18,11 +18,11 @@ const placeholders: { [key in Mode]: string } = {
 };
 
 export default function CommandInput({ closeFn, openFn, ...props }: Props) {
-  const { mode, input, setValue: setCmd } = useCommand();
+  const [{ mode, input }, setCmd] = useCommand();
   const ref = useRef<HTMLInputElement>(null);
   const handleEsc = useCallback(() => {
     if (mode !== "normal") {
-      setCmd({ mode: "normal" });
+      setCmd({ mode: "normal", input: "" });
     } else {
       closeFn();
     }
@@ -34,6 +34,7 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
   }, [openFn, ref]);
   const handleInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      openFn();
       if (mode === "normal") {
         const [newMode, newValue] = getMode(e.target.value);
 
@@ -42,7 +43,7 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
       }
       setCmd({ input: e.target.value });
     },
-    [setCmd, mode],
+    [setCmd, mode, openFn],
   );
   useKeyPress("Escape", handleEsc);
   useKeyPress("/", handleSlash);
@@ -55,7 +56,7 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
       onChange={handleInput}
       placeholder={placeholders[mode]}
       onFocus={openFn}
-      className="placeholder:font-light pl-3.5 placeholder:text-center bg-transparent focus:outline-none w-full shadow-none text-slate-600"
+      className="placeholder:font-light placeholder:text-sm pl-3.5 placeholder:text-center bg-transparent focus:outline-none w-full shadow-none text-slate-600"
     ></TextInput>
   );
 }

@@ -3,7 +3,6 @@ import { twMerge } from "tailwind-merge";
 
 type Props = {
   focus?: boolean;
-  [x: string]: any;
 } & React.HTMLProps<HTMLInputElement>;
 
 const TextInput = forwardRef<HTMLInputElement, Props>(function TextInput(
