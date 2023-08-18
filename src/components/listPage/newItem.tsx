@@ -27,6 +27,7 @@ export default function NewItem({ className }: React.HTMLProps<HTMLFormElement>)
               <FormLabel className="text-muted-foreground">item name</FormLabel>
               <TextInput
                 value={values.name}
+                onChange={handleChange}
                 name="name"
                 className="bg-slate-100 py-1 px-1.5 text-sm"
                 placeholder="item name"
@@ -37,6 +38,7 @@ export default function NewItem({ className }: React.HTMLProps<HTMLFormElement>)
               <FormLabel className="text-muted-foreground">tag name</FormLabel>
               <TextInput
                 className="bg-slate-100 py-1 px-1.5 text-sm"
+                onChange={handleChange}
                 placeholder="tags"
               ></TextInput>
               <FormLabel className="text-destructive font-light">{errors.tags && " "}</FormLabel>

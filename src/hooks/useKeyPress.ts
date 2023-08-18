@@ -1,13 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
 
-export function useKeyPress(listenKey: string, cb: () => unknown, onKeyUp: boolean = false) {
+type Opts = {
+  onKeyUp?: boolean;
+  preventDefault?: boolean;
+  stopProp?: boolean;
+};
+
+export function useKeyPress(
+  listenKey: string,
+  cb: () => unknown,
+  { onKeyUp = false, preventDefault = false, stopProp = false }: Opts = {},
+) {
   const handler = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === listenKey) {
+        if (preventDefault) {
+          e.preventDefault();
+        }
+        if (stopProp) {
+          e.stopPropagation();
+        }
         cb();
       }
     },
-    [listenKey, cb],
+    [listenKey, cb, preventDefault, stopProp],
   );
 
   useEffect(() => {

@@ -44,7 +44,9 @@ export default function Navbar({ className }: Props) {
   } = useAuth();
 
   return (
-    <NavigationMenu className={twMerge("p-3 flex w-full max-w-full", className)}>
+    <NavigationMenu
+      className={twMerge("p-3 flex w-full max-w-full bg-white/90 backdrop-blur-sm", className)}
+    >
       <NavigationMenuList className="">
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
