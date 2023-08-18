@@ -18,7 +18,7 @@ const placeholders: { [key in Mode]: string } = {
 };
 
 export default function CommandInput({ closeFn, openFn, ...props }: Props) {
-  const [{ mode, input }, setCmd] = useCommand();
+  const [{ mode, input, suggestedAction }, setCmd] = useCommand();
   const ref = useRef<HTMLInputElement>(null);
   const handleEsc = useCallback(() => {
     if (mode !== "normal") {
@@ -27,11 +27,12 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
       closeFn();
     }
   }, [mode, setCmd, closeFn]);
+
   const handleSlash = useCallback(() => {
     ref.current?.focus();
-    console.log("fofcus");
     openFn();
   }, [openFn, ref]);
+
   const handleInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       openFn();
@@ -45,6 +46,12 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
     },
     [setCmd, mode, openFn],
   );
+
+  const handleEnter = useCallback(() => {
+    suggestedAction();
+  }, [suggestedAction]);
+
+  useKeyPress("Enter", handleEnter, { preventDefault: true, stopProp: true });
   useKeyPress("Escape", handleEsc);
   useKeyPress("/", handleSlash);
 
