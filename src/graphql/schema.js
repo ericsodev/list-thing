@@ -112,6 +112,7 @@ const typeDefs = gql`
   input AddItemInput {
     name: String!
     listId: ID!
+    tags: [String!]
   }
 
   input ListInput {

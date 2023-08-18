@@ -65,11 +65,10 @@ model Item {
 }
 
 model ItemTag {
-  tagName String
-  item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  itemId  String
-  Tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  tagId   String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId String
+  Tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  String
 
   @@id([tagId, itemId])
 }
@@ -81,6 +80,7 @@ model Tag {
   name    String
   ItemTag ItemTag[]
 
+  @@unique([name, listId])
   @@fulltext([name])
 }
 
