@@ -34,10 +34,15 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
   }, [openFn, ref]);
   const handleInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const [mode, newValue] = getMode(e.target.value);
-      setCmd({ mode: mode, input: newValue });
+      if (mode === "normal") {
+        const [newMode, newValue] = getMode(e.target.value);
+
+        setCmd({ mode: newMode, input: newValue });
+        return;
+      }
+      setCmd({ input: e.target.value });
     },
-    [setCmd],
+    [setCmd, mode],
   );
   useKeyPress("Escape", handleEsc);
   useKeyPress("/", handleSlash);
