@@ -77,7 +77,7 @@ export default function NewListPage(): React.ReactNode {
                                 if (e.key !== "Enter") return;
 
                                 // validate and add to field array
-                                const result = tagInputValidate.safeParse(tagInput);
+                                const result = tagInputValidate.safeParse(tagInput.trim());
                                 if (!result.success) {
                                   // error validating
                                   setFieldError("tags", result.error.issues[0].message);
@@ -90,7 +90,9 @@ export default function NewListPage(): React.ReactNode {
                                   return;
                                 }
 
-                                arrayHelpers.push(result.data);
+                                if (result.data) {
+                                  arrayHelpers.push(result.data);
+                                }
                                 setTagInput("");
                               }}
                               onInput={(e: React.FormEvent<HTMLInputElement>) => {

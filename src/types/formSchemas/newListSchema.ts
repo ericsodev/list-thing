@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-export const tagInputValidate = z.string().max(30, "A tag cannot exceed 30 characters");
+export const tagInputValidate = z
+  .string({ required_error: "The tag name cannot be empty" })
+  .max(30, "A tag cannot exceed 30 characters");
 
 export const newListSchema = z.object({
   name: z
