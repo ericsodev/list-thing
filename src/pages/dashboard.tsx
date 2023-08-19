@@ -48,7 +48,7 @@ function DashboardPage() {
       <div
         ref={parent}
         className="grid gap-6 grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))]
-        col-start-3 col-span-8 auto-rows-[200px]"
+         md:col-start-3 px-6 md:px-0 col-span-full md:col-span-8 auto-rows-[200px]"
       >
         {loading && (
           <Card>
