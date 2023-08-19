@@ -18,7 +18,7 @@ const placeholders: { [key in Mode]: string } = {
 };
 
 export default function CommandInput({ closeFn, openFn, ...props }: Props) {
-  const [{ mode, input, suggestedAction }, setCmd] = useCommand();
+  const [{ mode, input, suggestions, selectedSuggestion }, setCmd] = useCommand();
   const ref = useRef<HTMLInputElement>(null);
   const handleEsc = useCallback(() => {
     if (mode !== "normal") {
@@ -48,8 +48,11 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
   );
 
   const handleEnter = useCallback(() => {
-    suggestedAction();
-  }, [suggestedAction]);
+    if (selectedSuggestion !== undefined) {
+      const action = suggestions[selectedSuggestion].action;
+      if (action) action();
+    }
+  }, [selectedSuggestion, suggestions]);
 
   useKeyPress("Enter", handleEnter, { preventDefault: true, stopProp: true });
   useKeyPress("Escape", handleEsc);

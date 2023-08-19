@@ -1,9 +1,9 @@
-import { AddItemInput } from "../types/graphql";
+import { AddItemInput, MutationAddItemArgs } from "../types/graphql";
 import { authorized } from "./authUtil";
 
 const resolver = {
   Mutation: {
-    addItem: authorized(async (_p, args: AddItemInput, ctx, _i) => {
+    addItem: authorized(async (_p, { input: args }: MutationAddItemArgs, ctx, _i) => {
       let tags = await ctx.prisma.$transaction(
         (args.tags || []).map((tag) =>
           ctx.prisma.tag.upsert({
@@ -24,7 +24,6 @@ const resolver = {
           }),
         ),
       );
-
       return await ctx.prisma.item.create({
         data: {
           name: args.name,

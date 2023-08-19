@@ -1,7 +1,9 @@
-import gql from "graphql-tag";
+import { graphql } from "@/graphql/types/gql";
 
-export const AddItem = gql`
-  mutation AddItem($name: String!, $tags: [String!]!, $listId: String!) {
-    id
+export const AddItem = graphql(`
+  mutation AddItem($name: String!, $tags: [String!], $listId: ID!) {
+    addItem(input: { name: $name, listId: $listId, tags: $tags }) {
+      id
+    }
   }
-`;
+`);

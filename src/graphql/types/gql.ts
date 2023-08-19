@@ -16,6 +16,7 @@ const documents = {
     "\n  query GetToken {\n    token\n  }\n": types.GetTokenDocument,
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
     "\n  mutation deleteList($id: ID!) {\n    deleteList(id: $id)\n  }\n": types.DeleteListDocument,
+    "\n  mutation AddItem($name: String!, $tags: [String!], $listId: ID!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags }) {\n      id\n    }\n  }\n": types.AddItemDocument,
     "\n  query GetList {\n    list(id: \"sdfsdf\") {\n      name\n    }\n  }\n": types.GetListDocument,
     "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n": types.CreateListDocument,
     "\n  query GetLists {\n    lists {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n    }\n  }\n": types.GetListsDocument,
@@ -51,6 +52,10 @@ export function graphql(source: "\n  mutation Logout {\n    logout\n  }\n"): (ty
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation deleteList($id: ID!) {\n    deleteList(id: $id)\n  }\n"): (typeof documents)["\n  mutation deleteList($id: ID!) {\n    deleteList(id: $id)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation AddItem($name: String!, $tags: [String!], $listId: ID!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags }) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation AddItem($name: String!, $tags: [String!], $listId: ID!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags }) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

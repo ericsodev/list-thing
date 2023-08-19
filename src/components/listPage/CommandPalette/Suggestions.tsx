@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useCommand } from "./CommandContext";
 import useThrottled from "@/hooks/useThrottledValue";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { twMerge } from "tailwind-merge";
-import { useKeyPress } from "@/hooks/useKeyPress";
+import { AddItem } from "./graphql";
+import { useListContext } from "../listContext";
+import { useAuthedMutation } from "@/hooks/useAuthRequest";
 
 export type Suggestion = {
   title: NonNullable<React.ReactNode>;
@@ -15,10 +16,12 @@ export type Suggestion = {
 const itemRegex = /^([^#\s]+(?:[^#\n\t\r])*)((?:#[^#\s][^#\n\t\r]*)*)/gm;
 const tagClasses = "px-1 py-0.5 bg-primary/30 rounded-md text-xs";
 export default function Suggestions() {
-  const [{ mode, input, selectedSuggestion }, setCmd] = useCommand();
+  const [{ mode, input, suggestions }, setCmd] = useCommand();
   const throttledInput = useThrottled(input);
+  const [addItemFn] = useAuthedMutation(AddItem);
+  const { list } = useListContext();
 
-  const suggestions = useMemo<Suggestion[]>(() => {
+  useEffect(() => {
     const normalSuggestions: Suggestion[] = [
       {
         title: "create",
@@ -46,41 +49,55 @@ export default function Suggestions() {
       },
     ];
     if (mode === "normal") {
-      return normalSuggestions;
+      setCmd({ suggestions: normalSuggestions });
+      return;
     } else if (mode === "create") {
       const parsedInput = parseCreateInput(throttledInput);
-      if (!parsedInput) return [];
-      const [name, tags] = parsedInput;
-      return [
-        {
-          title: (
-            <>
-              <strong className="font-medium">create item: </strong>
-              {name}
-            </>
-          ),
-          desc: (
-            <>
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {tags.map((tag) => (
-                  <div key={tag} className={tagClasses}>
-                    {tag}
-                  </div>
-                ))}
-              </div>
-            </>
-          ),
-        },
-      ];
-    }
-    return [];
-  }, [mode, setCmd, throttledInput]);
 
-  useEffect(() => {
-    if (suggestions.length > 0 && selectedSuggestion === undefined) {
-      setCmd({ selectedSuggestion: 0, suggestedAction: suggestions[0].action });
+      if (!parsedInput) {
+        setCmd({ suggestions: [], selectedSuggestion: undefined });
+        return;
+      }
+
+      const [name, tags] = parsedInput;
+      setCmd({
+        selectedSuggestion: 0,
+        suggestions: [
+          {
+            action: async () => {
+              setCmd({ input: "" });
+              const { data, errors } = await addItemFn({
+                variables: { name: name, tags: tags, listId: list?.id! },
+              });
+              if (errors) {
+                console.log(errors);
+              }
+            },
+            title: (
+              <>
+                <strong className="font-medium">create item: </strong>
+                {name}
+              </>
+            ),
+            desc: (
+              <>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {tags.map((tag) => (
+                    <div key={tag} className={tagClasses}>
+                      {tag}
+                    </div>
+                  ))}
+                </div>
+              </>
+            ),
+          },
+        ],
+      });
+      return;
     }
-  }, [suggestions, setCmd, selectedSuggestion]);
+
+    setCmd({ suggestions: [] });
+  }, [mode, setCmd, throttledInput]);
 
   return (
     <div className="">
@@ -106,6 +123,7 @@ function SuggestionItem(props: Suggestion & { idx: number }) {
     <li
       className={twMerge(
         "flex py-2 px-3 cursor-pointer border-slate-200 border-b-[1px] last:border-b-0 hover:bg-slate-200/30",
+        selectedSuggestion === props.idx && "bg-slate-200/20",
       )}
       onClick={props.action}
     >

@@ -2,7 +2,7 @@ import type { ListBySlugQuery } from "@/graphql/types/graphql";
 import React, { useContext } from "react";
 
 type Context = {
-  list: ListBySlugQuery | undefined;
+  list: ListBySlugQuery["listSlug"] | undefined;
   loading: boolean;
   refetch: () => Promise<void>;
 };

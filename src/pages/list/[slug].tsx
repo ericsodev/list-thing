@@ -41,7 +41,7 @@ function ListPage() {
     pollInterval: 60 * 1000,
     fetchPolicy: "cache-and-network",
   });
-  if (error || ((!list || !list?.listSlug) && !loading)) {
+  if (error || (!list && !loading)) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <div className="relative">
@@ -66,7 +66,7 @@ function ListPage() {
       </Head>
       <ListContextProvider
         value={{
-          list,
+          list: list?.listSlug,
           refetch: async () => {
             await refetch;
           },
