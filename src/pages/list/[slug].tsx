@@ -1,8 +1,6 @@
 import { getAuthLayout } from "@/components/Authenticated";
 import React from "react";
-import gql from "graphql-tag";
 import { useAuthedQuery } from "@/hooks/useAuthRequest";
-import { ListBySlugQuery } from "@/graphql/types/graphql";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -10,22 +8,8 @@ import { Button } from "@/components/ui/button";
 import ListContextProvider from "@/components/listPage/listContext";
 import CommandPalette from "@/components/listPage/CommandPalette";
 import Head from "next/head";
-
-const getList = gql`
-  query ListBySlug($slug: String!) {
-    listSlug(slug: $slug) {
-      id
-      name
-      memberCount
-      itemCount
-      slug
-      items {
-        id
-        name
-      }
-    }
-  }
-`;
+import { GetListSlug } from "@/components/listPage/graphql";
+import ItemList from "@/components/listPage/ItemList";
 
 function ListPage() {
   const router = useRouter();
@@ -34,7 +18,7 @@ function ListPage() {
     loading,
     error,
     refetch,
-  } = useAuthedQuery<ListBySlugQuery>(getList, {
+  } = useAuthedQuery(GetListSlug, {
     variables: {
       slug: router.query.slug,
     },
@@ -60,13 +44,13 @@ function ListPage() {
     );
   }
   return (
-    <div className="pt-32 pb-8 grid grid-cols-[auto_1fr_auto] min-h-screen">
+    <div className="pt-32 pb-32 grid grid-cols-[auto_1fr_auto] h-screen max-h-screen overflow-auto">
       <Head>
         <title>{list?.listSlug?.name || "Loading List"}</title>
       </Head>
       <ListContextProvider
         value={{
-          list: list?.listSlug,
+          list: list?.listSlug!,
           refetch: async () => {
             await refetch;
           },
@@ -74,20 +58,21 @@ function ListPage() {
         }}
       >
         <CommandPalette></CommandPalette>
-        <div className="col-start-2 col-span-1 flex flex-col items-center">
+        <div className="col-start-2 max-h-full col-span-1 flex flex-col items-center">
           {!loading && (
             <>
-              <h1 className="text-5xl text-slate-800 py-16 font-medium">
-                {list?.listSlug && list.listSlug.name}
+              <div className="sticky py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
+                <h1 className="text-5xl text-slate-800 font-medium">
+                  {list?.listSlug && list.listSlug.name}
 
-                {loading && <Skeleton className="w-28 h-[20px] rounded-full" />}
-              </h1>
-              <div className="mt-4">
-                {list?.listSlug && list?.listSlug?.items.length > 0 ? (
-                  <ul>{list?.listSlug?.items.map((item) => <li key={item.id}>{item.name}</li>)}</ul>
-                ) : (
-                  <h1 className="text-lg text-muted-foreground">your list is empty</h1>
-                )}
+                  {loading && <Skeleton className="w-28 h-[20px] rounded-full" />}
+                </h1>
+              </div>
+
+              <div className="mt-4 max-h-full grid grid-cols-[1fr_minmax(auto,500px)_1fr] w-full">
+                <div className=""></div>
+                <ItemList className="max-h-full overflow-y-scroll shrink-0"></ItemList>
+                <div className=""></div>
               </div>
             </>
           )}
