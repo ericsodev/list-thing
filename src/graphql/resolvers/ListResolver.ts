@@ -108,6 +108,15 @@ const resolver = {
               name: true,
               likes: true,
               createdOn: true,
+              ItemTag: {
+                select: {
+                  Tag: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
               adder: {
                 select: {
                   name: true,
@@ -120,6 +129,11 @@ const resolver = {
       if (!result) return null;
       if (!result.ListUser.some((user) => user.userId === ctx.user.id))
         throw new GraphQLError(...CUSTOM_ERRORS.FORBIDDEN);
+      result.item = result.item.map((item) => ({
+        ...item,
+        tags: item.ItemTag.map((x) => ({ name: x.Tag.name })),
+      }));
+      console.log(result.item);
       return {
         ...result,
         memberCount: result._count.ListUser,

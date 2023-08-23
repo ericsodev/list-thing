@@ -53,16 +53,11 @@ const typeDefs = gql`
     item: Item!
   }
 
-  type TagItem {
-    tag: Tag!
-    item: Item!
-  }
-
   type Item {
     id: ID!
     name: String!
     slug: String!
-    tagItems: [TagItem!]!
+    tags: [Tag!]!
     adder: User!
     list: List!
     date: DateTime!
@@ -73,7 +68,8 @@ const typeDefs = gql`
   type Tag {
     id: ID!
     list: List!
-    tagItems: [TagItem!]!
+    name: String!
+    items: [Item!]!
   }
 
   # Filters and Sorting Types
