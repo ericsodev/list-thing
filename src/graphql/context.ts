@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { db } from "@prisma/client";
 import prisma from "../../lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
