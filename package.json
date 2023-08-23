@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "migrate:generate": "drizzle-kit generate:pg",
+    "migrate:push": "node ./src/lib/db/migrate.ts",
     "codegen": "graphql-codegen --config codegen.ts",
     "codegen-watch": "graphql-codegen --watch --config codegen.ts"
   },
@@ -66,6 +67,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/pg": "^8.10.2",
     "drizzle-kit": "^0.19.13",
-    "prettier": "^3.0.1"
+    "prettier": "^3.0.1",
+    "ts-node": "^10.9.1"
   }
 }
