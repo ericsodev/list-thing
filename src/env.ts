@@ -1,6 +1,7 @@
 import { z } from "zod";
 const envSchema = z.object({
   DATABASE_URL: z.string(),
+  DATABASE_SSL_PATH: z.string(),
   ACCESS_KEY: z.string(),
   REFRESH_KEY: z.string(),
   REFRESH_EXP: z.string(),

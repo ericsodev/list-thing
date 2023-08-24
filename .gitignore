@@ -38,3 +38,6 @@ next-env.d.ts
 # graphql-prisma generated
 src/generated
 .env
+
+# db ssl
+*.crt
