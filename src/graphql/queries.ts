@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 
 export const GetList = gql`
   query GetList {
-    list(id: "sdfsdf") {
+    list(id: Int!) {
       name
     }
   }
