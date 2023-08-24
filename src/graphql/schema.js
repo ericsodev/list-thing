@@ -20,12 +20,12 @@ const typeDefs = gql`
   }
 
   type User {
-    id: ID!
+    id: Int!
     name: String!
   }
 
   type List {
-    id: ID!
+    id: Int!
     name: String!
     slug: String!
     createdOn: DateTime!
@@ -46,7 +46,7 @@ const typeDefs = gql`
   }
 
   type Comment {
-    id: ID!
+    id: Int!
     text: String!
     user: User!
     date: DateTime!
@@ -54,7 +54,7 @@ const typeDefs = gql`
   }
 
   type Item {
-    id: ID!
+    id: Int!
     name: String!
     slug: String!
     tags: [Tag!]!
@@ -66,7 +66,7 @@ const typeDefs = gql`
   }
 
   type Tag {
-    id: ID!
+    id: Int!
     list: List!
     name: String!
     items: [Item!]!
@@ -107,7 +107,7 @@ const typeDefs = gql`
 
   input AddItemInput {
     name: String!
-    listId: ID!
+    listId: Int!
     tags: [String!]
   }
 
@@ -142,12 +142,12 @@ const typeDefs = gql`
 
   input TagSearchInput {
     name: StringFilter
-    listId: ID!
+    listId: Int!
   }
 
   type Query {
     lists(input: ListInput): [List!]!
-    list(id: ID!): List
+    list(id: Int!): List
     tagSearch(input: TagSearchInput): [String!]!
     listSlug(slug: String!): List
     users(input: UserSearchInput!): [User!]!
@@ -160,7 +160,7 @@ const typeDefs = gql`
     authenticate(input: AuthenticationInput!): String
     createAccount(input: CreateUserInput!): Boolean!
     createList(name: String!, tags: [String!]): List!
-    deleteList(id: ID!): Boolean!
+    deleteList(id: Int!): Boolean!
     addItem(input: AddItemInput!): Item!
     removeItem(input: AddItemInput!): Boolean
     logout: Boolean

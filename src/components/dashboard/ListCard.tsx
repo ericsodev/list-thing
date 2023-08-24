@@ -21,7 +21,7 @@ type Props = { refetch: () => Promise<any> };
 type List = GetListsQuery["lists"][0];
 
 const deleteList = gql`
-  mutation deleteList($id: ID!) {
+  mutation deleteList($id: Int!) {
     deleteList(id: $id)
   }
 `;
