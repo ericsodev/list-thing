@@ -10,6 +10,7 @@ const envSchema = z.object({
 
 export const env = envSchema.parse({
   DATABASE_URL: process.env.DATABASE_URL,
+  DATABASE_SSL_PATH: process.env.DATABASE_SSL_PATH,
   ACCESS_KEY: process.env.ACCESS_KEY,
   REFRESH_KEY: process.env.REFRESH_KEY,
   REFRESH_EXP: process.env.REFRESH_EXP ?? "14d",
