@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "62428888-19c6-4e6b-afa3-cd7307e84477",
+  "id": "9d2889b7-dbb7-49b2-86c5-c6ca981b0dfb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "comment": {
@@ -309,7 +309,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "name_list_unique": {
+          "name": "name_list_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name",
+            "list_id"
+          ]
+        }
+      }
     },
     "tag_to_item": {
       "name": "tag_to_item",
