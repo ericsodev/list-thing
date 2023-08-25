@@ -161,7 +161,7 @@ const typeDefs = gql`
     createAccount(input: CreateUserInput!): Boolean!
     createList(name: String!, tags: [String!]): List!
     deleteList(id: Int!): Boolean!
-    addItem(input: AddItemInput!): Item!
+    addItem(input: AddItemInput!): Int!
     removeItem(input: AddItemInput!): Boolean
     logout: Boolean
   }
