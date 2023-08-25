@@ -57,7 +57,6 @@ const resolver = {
     },
     createAccount: async (_: any, { input }: MutationCreateAccountArgs, ctx: Context) => {
       const parsedInput = await userSchema.safeParseAsync(input);
-
       if (!parsedInput.success) {
         // fails schema
         throw new GraphQLError(parsedInput.error.message);
