@@ -1,3 +1,4 @@
+export * from "./schema";
 import { env } from "@/env";
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { readFileSync } from "fs";
