@@ -16,7 +16,7 @@ const documents = {
     "\n  query GetToken {\n    token\n  }\n": types.GetTokenDocument,
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
     "\n  mutation deleteList($id: Int!) {\n    deleteList(id: $id)\n  }\n": types.DeleteListDocument,
-    "\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags }) {\n      id\n    }\n  }\n": types.AddItemDocument,
+    "\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags })\n  }\n": types.AddItemDocument,
     "\n  query ListBySlug($slug: String!) {\n    listSlug(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items {\n        id\n        name\n        tags {\n          name\n        }\n      }\n    }\n  }\n": types.ListBySlugDocument,
     "\n  query GetLists {\n    lists {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n    }\n  }\n": types.GetListsDocument,
     "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n": types.LoginDocument,
@@ -53,7 +53,7 @@ export function graphql(source: "\n  mutation deleteList($id: Int!) {\n    delet
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags }) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags }) {\n      id\n    }\n  }\n"];
+export function graphql(source: "\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags })\n  }\n"): (typeof documents)["\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags })\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
