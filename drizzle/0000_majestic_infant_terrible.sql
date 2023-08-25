@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS "list_to_user" (
 CREATE TABLE IF NOT EXISTS "tag" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(35) NOT NULL,
-	"list_id" integer NOT NULL
+	"list_id" integer NOT NULL,
+	CONSTRAINT "name_list_unique" UNIQUE("name","list_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tag_to_item" (

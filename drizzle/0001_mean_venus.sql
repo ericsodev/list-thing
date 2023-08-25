@@ -1,1 +1,0 @@
-ALTER TABLE "tag" ADD CONSTRAINT "name_list_unique" UNIQUE("name","list_id");
