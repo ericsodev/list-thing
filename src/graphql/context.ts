@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import { verifyAccessToken } from "./util/token";
 import { User } from "./types/graphql";
