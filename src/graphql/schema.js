@@ -100,9 +100,8 @@ const typeDefs = gql`
   }
 
   input UserSearchInput {
-    id: String
-    name: String
-    filter: StringFilter
+    id: Int
+    name: StringFilter
   }
 
   input AddItemInput {
@@ -151,7 +150,7 @@ const typeDefs = gql`
     tagSearch(input: TagSearchInput): [String!]!
     listSlug(slug: String!): List
     users(input: UserSearchInput!): [User!]!
-    user(name: String, id: String): User
+    user(name: String, id: Int): User
     token: String!
     self: User
   }

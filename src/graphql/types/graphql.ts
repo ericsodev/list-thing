@@ -191,7 +191,7 @@ export type QueryTagSearchArgs = {
 
 
 export type QueryUserArgs = {
-  id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -243,9 +243,8 @@ export type User = {
 };
 
 export type UserSearchInput = {
-  filter?: InputMaybe<StringFilter>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<StringFilter>;
 };
 
 export type GetTokenQueryVariables = Exact<{ [key: string]: never; }>;
