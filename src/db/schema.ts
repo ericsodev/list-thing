@@ -10,6 +10,7 @@ import {
   date,
   primaryKey,
   index,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["OWNER", "MEMBER"]);
@@ -55,13 +56,19 @@ export const item = pgTable("item", {
   status: itemStatusEnum("status").default("ACTIVE"),
 });
 
-export const tag = pgTable("tag", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 35 }).notNull(),
-  listId: integer("list_id")
-    .notNull()
-    .references(() => list.id, { onDelete: "cascade" }),
-});
+export const tag = pgTable(
+  "tag",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 35 }).notNull(),
+    listId: integer("list_id")
+      .notNull()
+      .references(() => list.id, { onDelete: "cascade" }),
+  },
+  (t) => ({
+    nameListUnique: unique("name_list_unique").on(t.name, t.listId),
+  }),
+);
 
 export const tagItem = pgTable(
   "tag_to_item",
