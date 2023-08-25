@@ -1,10 +1,8 @@
 import Button from "@/components/Button";
 import TextInput from "@/components/TextInput";
-import { useQuery } from "@apollo/client";
 import { Form, Formik } from "formik";
 import gql from "graphql-tag";
-import Link from "next/link";
-import React, { useEffect } from "react";
+import React from "react";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { client } from "./_app";
@@ -101,7 +99,9 @@ async function validate(values: z.infer<typeof userSchema>) {
     query: userSearchQuery,
     variables: {
       input: {
-        name: values.name,
+        name: {
+          equals: values.name,
+        },
       },
     },
   });
