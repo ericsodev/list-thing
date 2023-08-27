@@ -29,10 +29,16 @@ const typeDefs = gql`
     name: String!
     slug: String!
     createdOn: DateTime!
-    members: [User!]!
-    owner: [User!]!
-    items: [Item!]!
-    tags: [Tag!]!
+    members(name: StringFilter): [User!]!
+    owner: User!
+    items(
+      name: StringFilter
+      date: DateFilter
+      status: STATUS
+      sort: ItemSort
+      includesTags: ItemIncludeTags
+    ): [Item!]!
+    tags(name: StringFilter): [Tag!]!
     memberCount: Int!
     tagCount: Int!
     itemCount: Int!
@@ -58,10 +64,10 @@ const typeDefs = gql`
     name: String!
     slug: String!
     tags: [Tag!]!
-    adder: User!
+    adder: User
     list: List!
     date: DateTime!
-    comments: [Comment!]!
+    comments(date: DateFilter, dateSort: SORT_DIR): [Comment!]!
     status: STATUS!
   }
 
@@ -73,6 +79,12 @@ const typeDefs = gql`
   }
 
   # Filters and Sorting Types
+  input ItemSort {
+    name: SORT_DIR
+    date: SORT_DIR
+    status: SORT_DIR
+  }
+
   input StringFilter {
     startsWith: String
     search: String
@@ -144,11 +156,15 @@ const typeDefs = gql`
     listId: Int!
   }
 
+  input ItemIncludeTags {
+    tags: [String!]!
+    all: Boolean # default some
+  }
+
   type Query {
     lists(input: ListInput): [List!]!
-    list(id: Int!): List
+    list(id: Int, slug: String!): List
     tagSearch(input: TagSearchInput): [String!]!
-    listSlug(slug: String!): List
     users(input: UserSearchInput!): [User!]!
     user(name: String, id: Int): User
     token: String!
