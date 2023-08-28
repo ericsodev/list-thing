@@ -26,7 +26,7 @@ export default function ItemList({ className, ...props }: React.HTMLProps<HTMLDi
           </span>
         ))}
       {list.itemCount === 0 && (
-        <h1 className="text-lg text-muted-foreground">your list is empty</h1>
+        <h1 className="text-lg text-center text-muted-foreground">your list is empty</h1>
       )}
     </div>
   );
