@@ -3,10 +3,7 @@ import { Context } from "../context";
 import { QueryUsersArgs, User } from "../types/graphql";
 import { authorized, hasValidToken } from "./authUtil";
 import { AnyColumn, SQL, and, eq, like, or } from "drizzle-orm";
-
-function opt<T>(v: unknown, sql: SQL<T>): SQL<T> | undefined {
-  return v === undefined || v === null ? undefined : sql;
-}
+import { opt } from "../util/where";
 
 const resolver = {
   Query: {
