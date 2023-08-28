@@ -55,23 +55,18 @@ function ListPage() {
       >
         <CommandPalette></CommandPalette>
         <div className="col-start-2 max-h-full col-span-1 flex flex-col items-center">
-          {!loading && data?.list && (
-            <>
-              <div className="sticky py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
-                <h1 className="text-5xl text-slate-800 font-medium">
-                  {data.list.slug && data.list.name}
+          <div className="sticky py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
+            <h1 className="text-5xl text-slate-800 font-medium">
+              {!loading && data?.list && data.list.name}
+            </h1>
+            {loading && <Skeleton className="w-56 mx-auto h-[30px] rounded-lg" />}
+          </div>
 
-                  {loading && <Skeleton className="w-28 h-[20px] rounded-full" />}
-                </h1>
-              </div>
-
-              <div className="mt-4 max-h-full grid grid-cols-[1fr_minmax(auto,500px)_1fr] w-full">
-                <div className=""></div>
-                <ItemList className="max-h-full overflow-y-scroll shrink-0"></ItemList>
-                <div className=""></div>
-              </div>
-            </>
-          )}
+          <div className="mt-4 max-h-full grid grid-cols-[1fr_minmax(auto,500px)_1fr] w-full">
+            <div className=""></div>
+            <ItemList className="max-h-full overflow-y-scroll shrink-0"></ItemList>
+            <div className=""></div>
+          </div>
         </div>
       </ListContextProvider>
     </div>

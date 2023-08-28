@@ -1,12 +1,24 @@
 import React from "react";
 import { useListContext } from "./listContext";
 import { twMerge } from "tailwind-merge";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ItemList({ className, ...props }: React.HTMLProps<HTMLDivElement>) {
-  const { list } = useListContext();
+  const { list, loading } = useListContext();
   return (
     <div className={twMerge("flex h-full flex-col gap-2", className)}>
-      {list.items.length > 0 &&
+      {loading &&
+        [...Array(3)].map((_, i) => (
+          <span
+            key={i}
+            className="flex gap-3 w-full bg-secondary/40 hover:bg-secondary/80 py-2 px-3 rounded-md"
+          >
+            <Skeleton className="w-56 h-[20px] rounded-full" />
+            <Skeleton className="ml-auto w-24 h-[20px] rounded-full" />
+          </span>
+        ))}
+      {list &&
+        list.items.length > 0 &&
         list.items.map((item) => (
           <span
             key={item.id}
@@ -25,7 +37,7 @@ export default function ItemList({ className, ...props }: React.HTMLProps<HTMLDi
             </div>
           </span>
         ))}
-      {list.itemCount === 0 && (
+      {list && list.itemCount === 0 && (
         <h1 className="text-lg text-center text-muted-foreground">your list is empty</h1>
       )}
     </div>
