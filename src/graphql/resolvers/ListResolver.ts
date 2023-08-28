@@ -13,9 +13,10 @@ import { nullsToUndefined } from "../util/parse";
 import { GraphQLError } from "graphql";
 import CUSTOM_ERRORS from "../errorCodes";
 import { item, list, listUser, tag, tagItem } from "@/db";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { opt } from "@/graphql/util/where";
 import { whereDate, whereStr } from "../util/dbFilters";
+import { sortAll, sortParse } from "../util/dbSort";
 
 const resolver = {
   Query: {
@@ -121,7 +122,7 @@ const resolver = {
         .groupBy(sql`${list.id}`);
       return res[0].tagCount;
     },
-    items: async (p: { id: number }, args: ListItemsArgs, ctx: AuthedCtx) => {
+    items: async (p: { id: number }, { sort, ...args }: ListItemsArgs, ctx: AuthedCtx) => {
       const res = await ctx.db
         .select({
           id: item.id,
@@ -141,7 +142,14 @@ const resolver = {
             opt(inArray, args.includesTags?.tags, tag.name, args.includesTags?.tags!),
           ),
         )
-        .groupBy(item.id);
+        .groupBy(item.id)
+        .orderBy(
+          ...sortAll([
+            sortParse(item.name, sort?.name),
+            sortParse(item.createdOn, sort?.date),
+            sortParse(item.status, sort?.status),
+          ]),
+        );
       return res;
     },
   },
