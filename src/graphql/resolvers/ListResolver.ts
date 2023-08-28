@@ -20,7 +20,6 @@ import { whereDate, whereStr } from "../util/dbFilters";
 const resolver = {
   Query: {
     lists: authorized<QueryListsArgs>(async (_p, { input }, ctx) => {
-      console.log(ctx.user.id);
       const res = await ctx.db
         .select({ id: list.id, createdOn: list.createdOn, slug: list.slug, name: list.name })
         .from(listUser)
@@ -123,7 +122,6 @@ const resolver = {
       return res[0].tagCount;
     },
     items: async (p: { id: number }, args: ListItemsArgs, ctx: AuthedCtx) => {
-      console.log("id:" + p.id);
       const res = await ctx.db
         .select({
           id: item.id,
