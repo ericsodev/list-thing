@@ -6,17 +6,17 @@ import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
 import { useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { AnimatePresence, motion } from "framer-motion";
-import { MutationFunction, useMutation } from "@apollo/client";
+import { MutationFunction } from "@apollo/client";
 import { CreateList } from "@/graphql/queries";
-import { CreateListMutation } from "@/graphql/types/graphql";
 import { NextRouter, useRouter } from "next/router";
 import Authenticated from "@/components/Authenticated";
 import { useAuthedMutation } from "@/hooks/useAuthRequest";
 import Head from "next/head";
+import { CreateListMutation } from "@/graphql/types/graphql";
 
 export default function NewListPage(): React.ReactNode {
   const [tagInput, setTagInput] = useState<string>("");
-  const [createFn, createState] = useAuthedMutation<CreateListMutation>(CreateList);
+  const [createFn, createState] = useAuthedMutation(CreateList);
   const router = useRouter();
 
   return (

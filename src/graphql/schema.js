@@ -34,7 +34,7 @@ const typeDefs = gql`
     items(
       name: StringFilter
       date: DateFilter
-      status: STATUS
+      status: [STATUS!]
       sort: ItemSort
       includesTags: ItemIncludeTags
     ): [Item!]!
@@ -73,7 +73,6 @@ const typeDefs = gql`
 
   type Tag {
     id: Int!
-    list: List!
     name: String!
     items: [Item!]!
   }
@@ -87,7 +86,6 @@ const typeDefs = gql`
 
   input StringFilter {
     startsWith: String
-    search: String
     equals: String
     contains: String
   }
@@ -123,22 +121,15 @@ const typeDefs = gql`
   }
 
   input ListInput {
-    filter: ListInputFilter
+    createdOn: DateFilter
+    name: StringFilter
+    role: [ROLE!]
     sort: ListInputSort
-    limit: Int
-    page: Int
-    item: ItemFilter
   }
 
   input ItemFilter {
     name: StringFilter
     createdOn: DateFilter
-  }
-
-  input ListInputFilter {
-    name: StringFilter
-    date: DateFilter
-    role: ROLE
   }
 
   input ListInputSort {
@@ -163,7 +154,7 @@ const typeDefs = gql`
 
   type Query {
     lists(input: ListInput): [List!]!
-    list(id: Int, slug: String!): List
+    list(id: Int, slug: String): List
     tagSearch(input: TagSearchInput): [String!]!
     users(input: UserSearchInput!): [User!]!
     user(name: String, id: Int): User

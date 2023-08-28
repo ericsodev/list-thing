@@ -17,7 +17,9 @@ const documents = {
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
     "\n  mutation deleteList($id: Int!) {\n    deleteList(id: $id)\n  }\n": types.DeleteListDocument,
     "\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags })\n  }\n": types.AddItemDocument,
-    "\n  query ListBySlug($slug: String!) {\n    listSlug(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items {\n        id\n        name\n        tags {\n          name\n        }\n      }\n    }\n  }\n": types.ListBySlugDocument,
+    "\n  query ListBySlug($slug: String!) {\n    list(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items {\n        id\n        name\n        tags {\n          name\n        }\n      }\n    }\n  }\n": types.ListBySlugDocument,
+    "\n  query GetList($id: Int, $slug: String) {\n    list(id: $id, slug: $slug) {\n      name\n      itemCount\n      tagCount\n      memberCount\n    }\n  }\n": types.GetListDocument,
+    "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n": types.CreateListDocument,
     "\n  query GetLists {\n    lists {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n    }\n  }\n": types.GetListsDocument,
     "\n  mutation Login($input: AuthenticationInput!) {\n    authenticate(input: $input)\n  }\n": types.LoginDocument,
     "\n  mutation createAccount($name: String!, $password: String!) {\n    createAccount(input: { name: $name, password: $password })\n  }\n": types.CreateAccountDocument,
@@ -57,7 +59,15 @@ export function graphql(source: "\n  mutation AddItem($name: String!, $tags: [St
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query ListBySlug($slug: String!) {\n    listSlug(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items {\n        id\n        name\n        tags {\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query ListBySlug($slug: String!) {\n    listSlug(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items {\n        id\n        name\n        tags {\n          name\n        }\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query ListBySlug($slug: String!) {\n    list(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items {\n        id\n        name\n        tags {\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query ListBySlug($slug: String!) {\n    list(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items {\n        id\n        name\n        tags {\n          name\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetList($id: Int, $slug: String) {\n    list(id: $id, slug: $slug) {\n      name\n      itemCount\n      tagCount\n      memberCount\n    }\n  }\n"): (typeof documents)["\n  query GetList($id: Int, $slug: String) {\n    list(id: $id, slug: $slug) {\n      name\n      itemCount\n      tagCount\n      memberCount\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
