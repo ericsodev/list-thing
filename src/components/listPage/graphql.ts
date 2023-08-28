@@ -8,7 +8,7 @@ export const GetListSlug = graphql(`
       memberCount
       itemCount
       slug
-      items {
+      items(sort: { name: asc }) {
         id
         name
         tags {
