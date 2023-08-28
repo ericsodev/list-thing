@@ -13,19 +13,14 @@ import ItemList from "@/components/listPage/ItemList";
 
 function ListPage() {
   const router = useRouter();
-  const {
-    data: list,
-    loading,
-    error,
-    refetch,
-  } = useAuthedQuery(GetListSlug, {
+  const { data, loading, error, refetch } = useAuthedQuery(GetListSlug, {
     variables: {
       slug: router.query.slug,
     },
     pollInterval: 60 * 1000,
     fetchPolicy: "cache-and-network",
   });
-  if (error || (!list && !loading)) {
+  if (error || (!data && !loading)) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <div className="relative">
@@ -43,14 +38,15 @@ function ListPage() {
       </div>
     );
   }
+
   return (
     <div className="pt-32 pb-32 grid grid-cols-[auto_1fr_auto] h-screen max-h-screen overflow-auto">
       <Head>
-        <title>{list?.listSlug?.name || "Loading List"}</title>
+        <title>{data?.list?.name || "Loading List"}</title>
       </Head>
       <ListContextProvider
         value={{
-          list: list?.listSlug!,
+          list: data?.list?.slug!,
           refetch: async () => {
             await refetch;
           },
@@ -59,11 +55,11 @@ function ListPage() {
       >
         <CommandPalette></CommandPalette>
         <div className="col-start-2 max-h-full col-span-1 flex flex-col items-center">
-          {!loading && (
+          {!loading && data?.list && (
             <>
               <div className="sticky py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
                 <h1 className="text-5xl text-slate-800 font-medium">
-                  {list?.listSlug && list.listSlug.name}
+                  {data.list.slug && data.list.name}
 
                   {loading && <Skeleton className="w-28 h-[20px] rounded-full" />}
                 </h1>
