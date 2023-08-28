@@ -2,7 +2,7 @@ import type { ListBySlugQuery } from "@/graphql/types/graphql";
 import React, { useContext } from "react";
 
 type Context = {
-  list: NonNullable<ListBySlugQuery["listSlug"]>;
+  list: NonNullable<ListBySlugQuery["list"]>;
   loading: boolean;
   refetch: () => Promise<void>;
 };
@@ -10,7 +10,7 @@ type Context = {
 const context = React.createContext<Context>({
   loading: false,
   refetch: async () => {},
-  list: { id: "", name: "", slug: "", items: [], itemCount: 0, memberCount: 0 },
+  list: { id: 0, name: "", slug: "", items: [], itemCount: 0, memberCount: 0 },
 });
 
 export default function ListContextProvider({

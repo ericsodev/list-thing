@@ -12,6 +12,7 @@ export const GetListSlug = graphql(`
         id
         name
         tags {
+          id
           name
         }
       }

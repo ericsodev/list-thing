@@ -46,7 +46,7 @@ function ListPage() {
       </Head>
       <ListContextProvider
         value={{
-          list: data?.list?.slug!,
+          list: data?.list!,
           refetch: async () => {
             await refetch;
           },
