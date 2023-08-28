@@ -19,7 +19,7 @@ export default function Suggestions() {
   const [{ mode, input, suggestions }, setCmd] = useCommand();
   const throttledInput = useThrottled(input);
   const [addItemFn] = useAuthedMutation(AddItem);
-  const { list } = useListContext();
+  const { list, refetch } = useListContext();
 
   useEffect(() => {
     const normalSuggestions: Suggestion[] = [
@@ -69,6 +69,8 @@ export default function Suggestions() {
               const { data, errors } = await addItemFn({
                 variables: { name: name, tags: tags, listId: list?.id! },
               });
+              await refetch();
+
               if (errors) {
                 console.log(errors);
               }
@@ -97,7 +99,7 @@ export default function Suggestions() {
     }
 
     setCmd({ suggestions: [] });
-  }, [mode, setCmd, throttledInput]);
+  }, [mode, setCmd, throttledInput, refetch, addItemFn, list.id]);
 
   return (
     <div className="">

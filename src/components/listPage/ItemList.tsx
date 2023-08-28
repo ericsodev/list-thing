@@ -5,9 +5,10 @@ import { Skeleton } from "../ui/skeleton";
 
 export default function ItemList({ className, ...props }: React.HTMLProps<HTMLDivElement>) {
   const { list, loading } = useListContext();
+  const isLoading = loading && !list;
   return (
     <div className={twMerge("flex h-full flex-col gap-2", className)}>
-      {loading &&
+      {isLoading &&
         [...Array(3)].map((_, i) => (
           <span
             key={i}

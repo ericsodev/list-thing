@@ -48,7 +48,7 @@ function ListPage() {
         value={{
           list: data?.list!,
           refetch: async () => {
-            await refetch;
+            await refetch();
           },
           loading,
         }}
@@ -56,10 +56,8 @@ function ListPage() {
         <CommandPalette></CommandPalette>
         <div className="col-start-2 max-h-full col-span-1 flex flex-col items-center">
           <div className="sticky py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
-            <h1 className="text-5xl text-slate-800 font-medium">
-              {!loading && data?.list && data.list.name}
-            </h1>
-            {loading && <Skeleton className="w-56 mx-auto h-[30px] rounded-lg" />}
+            <h1 className="text-5xl text-slate-800 font-medium">{data?.list && data.list.name}</h1>
+            {loading && !data?.list && <Skeleton className="w-56 mx-auto h-[30px] rounded-lg" />}
           </div>
 
           <div className="mt-4 max-h-full grid grid-cols-[1fr_minmax(auto,500px)_1fr] w-full">
