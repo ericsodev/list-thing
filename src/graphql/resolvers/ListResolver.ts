@@ -20,17 +20,20 @@ import { whereDate, whereStr } from "../util/dbFilters";
 const resolver = {
   Query: {
     lists: authorized<QueryListsArgs>(async (_p, { input }, ctx) => {
+      console.log(ctx.user.id);
       const res = await ctx.db
         .select({ id: list.id, createdOn: list.createdOn, slug: list.slug, name: list.name })
         .from(listUser)
+        .leftJoin(list, eq(list.id, listUser.listId))
         .where(
           and(
+            whereStr(list.name, input?.name),
+            whereDate(list.createdOn, input?.createdOn),
+
             eq(listUser.userId, ctx.user.id),
             opt(inArray, input?.role, listUser.role, input?.role!),
           ),
-        )
-        .leftJoin(list, eq(list.id, listUser.listId))
-        .where(and(whereStr(list.name, input?.name), whereDate(list.createdOn, input?.createdOn)));
+        );
       return res;
     }),
     list: authorized<QueryListArgs>(async (_p, { slug, id }, ctx) => {
