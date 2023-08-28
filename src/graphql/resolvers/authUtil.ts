@@ -37,7 +37,8 @@ export async function hasValidToken(token?: string): Promise<User> {
 /**
  * Wrapper for any protected routes
  */
-type AuthedCtx = Context & { user: NonNullable<Pick<Context, "user">> };
+export type AuthedCtx = Context & { user: NonNullable<Pick<Context, "user">> };
+
 export function authorized<InputType>(
   fn: (parent: any, args: InputType, ctx: AuthedCtx, info: any) => unknown,
 ): (parent: any, args: InputType, ctx: AuthedCtx, info: any) => Promise<ReturnType<typeof fn>> {

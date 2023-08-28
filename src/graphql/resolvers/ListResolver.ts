@@ -1,196 +1,148 @@
 import {
+  Item,
+  ListItemsArgs,
+  ListTagsArgs,
   MutationCreateListArgs,
   MutationDeleteListArgs,
   QueryListArgs,
-  QueryListSlugArgs,
   QueryListsArgs,
+  Tag,
 } from "../types/graphql";
-import { authorized } from "./authUtil";
+import { AuthedCtx, authorized } from "./authUtil";
 import { nullsToUndefined } from "../util/parse";
 import { GraphQLError } from "graphql";
 import CUSTOM_ERRORS from "../errorCodes";
+import { item, list, listUser, tag, tagItem } from "@/db";
+import { and, eq, inArray, sql } from "drizzle-orm";
+import { opt } from "@/graphql/util/where";
+import { whereDate, whereStr } from "../util/dbFilters";
 
 const resolver = {
   Query: {
-    lists: authorized<QueryListsArgs>(async (_p, args, ctx) => {
-      let result = await ctx.prisma.list.findMany({
-        where: {
-          ListUser: {
-            some: {
-              userId: ctx.user.id,
-            },
-          },
-          name: nullsToUndefined(args.input?.filter?.name),
-          createdOn: nullsToUndefined(args.input?.filter?.date),
-        },
-        take: args.input?.limit ?? undefined,
-        orderBy: nullsToUndefined(args.input?.sort),
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          createdOn: true,
-          _count: {
-            select: {
-              ListUser: true,
-              item: true,
-              Tag: true,
-            },
-          },
-          item: {
-            where: {
-              createdOn: nullsToUndefined(args.input?.item?.createdOn),
-              name: nullsToUndefined(args.input?.item?.name),
-            },
-            select: {
-              id: true,
-              name: true,
-              likes: true,
-              createdOn: true,
-              adder: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      });
-      return result.map((l) => ({
-        ...l,
-        memberCount: l._count.ListUser,
-        itemCount: l._count.item,
-        tagCount: l._count.Tag,
-      }));
+    lists: authorized<QueryListsArgs>(async (_p, { input }, ctx) => {
+      const res = await ctx.db
+        .select({ id: list.id, createdOn: list.createdOn, slug: list.slug, name: list.name })
+        .from(listUser)
+        .where(
+          and(
+            eq(listUser.userId, ctx.user.id),
+            opt(inArray, input?.role, listUser.role, input?.role!),
+          ),
+        )
+        .leftJoin(list, eq(list.id, listUser.listId))
+        .where(and(whereStr(list.name, input?.name), whereDate(list.createdOn, input?.createdOn)));
+      return res;
     }),
-    list: authorized<QueryListArgs>(async (_p, args, ctx) => {
-      return await ctx.prisma.list.findMany({
-        where: {
-          ListUser: {
-            some: {
-              userId: ctx.user.id,
-            },
-          },
-          id: args.id,
-        },
-        select: {
-          id: true,
-          item: true,
-        },
-      });
-    }),
-    listSlug: authorized<QueryListSlugArgs>(async (_p, args, ctx) => {
-      let result = await ctx.prisma.list.findUnique({
-        where: {
-          slug: args.slug,
-        },
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          createdOn: true,
-          _count: {
-            select: {
-              ListUser: true,
-              item: true,
-              Tag: true,
-            },
-          },
-          ListUser: {
-            where: {
-              userId: ctx.user.id,
-            },
-          },
-          item: {
-            select: {
-              id: true,
-              status: true,
-              name: true,
-              likes: true,
-              createdOn: true,
-              ItemTag: {
-                select: {
-                  Tag: {
-                    select: {
-                      name: true,
-                    },
-                  },
-                },
-              },
-              adder: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      });
-      if (!result) return null;
-      if (!result.ListUser.some((user) => user.userId === ctx.user.id))
-        throw new GraphQLError(...CUSTOM_ERRORS.FORBIDDEN);
-      result.item = result.item.map((item) => ({
-        ...item,
-        tags: item.ItemTag.map((x) => ({ name: x.Tag.name })),
-      }));
-      console.log(result.item);
-      return {
-        ...result,
-        memberCount: result._count.ListUser,
-        itemCount: result._count.item,
-        tagCount: result._count.Tag,
-        items: result.item,
-      };
+    list: authorized<QueryListArgs>(async (_p, { slug, id }, ctx) => {
+      if (slug === undefined && id === undefined) {
+        throw new GraphQLError("Bad request. An id or slug is required");
+      }
+      const res = (await ctx.db.select().from(list))[0];
+      return res;
     }),
   },
   Mutation: {
     createList: authorized<MutationCreateListArgs>(async (_p, args, ctx) => {
-      return await ctx.prisma.list.create({
-        data: {
-          name: args.name,
-          ListUser: {
-            create: {
-              role: "OWNER",
-              user: {
-                connect: {
-                  id: ctx.user.id,
-                },
-              },
-            },
-          },
-          Tag: {
-            createMany: {
-              data:
-                args.tags?.map((x) => {
-                  return {
-                    name: x,
-                  };
-                }) ?? [],
-            },
-          },
-        },
-        select: {
-          id: true,
-          name: true,
-        },
+      const res = await ctx.db.transaction(async (tx) => {
+        const listRes = await tx
+          .insert(list)
+          .values({ name: args.name })
+          .returning({ id: list.id, createdOn: list.createdOn, slug: list.slug, name: list.name });
+        await tx
+          .insert(listUser)
+          .values({ listId: listRes[0].id, userId: ctx.user.id, role: "OWNER" });
+
+        if (args.tags && args.tags.length > 0) {
+          await tx
+            .insert(tag)
+            .values(args.tags.map((tag) => ({ listId: listRes[0].id, name: tag })));
+        }
+        return listRes;
       });
+      return res[0];
     }),
     deleteList: authorized<MutationDeleteListArgs>(async (_p, args, ctx) => {
-      const res = await ctx.prisma.list.deleteMany({
-        where: {
-          id: args.id,
-          ListUser: {
-            some: {
-              AND: {
-                userId: ctx.user.id,
-                role: "OWNER",
-              },
-            },
-          },
-        },
+      // delete if user is owner of the list
+      await ctx.db.transaction(async (tx) => {
+        const user = await tx
+          .select({ role: listUser.role })
+          .from(listUser)
+          .where(and(eq(listUser.listId, args.id), eq(listUser.userId, ctx.user.id)));
+        if (!user[0] || user[0].role !== "OWNER") {
+          return;
+        }
+
+        // authorized to delete list
+        await tx.delete(list).where(eq(list.id, args.id));
       });
-      return res.count > 0;
+      return true;
     }),
+  },
+  List: {
+    tags: async (p: { id: number }, args: ListTagsArgs, ctx: AuthedCtx) => {
+      // retrieve all tags given list id
+      return await ctx.db
+        .select({ id: tag.id, name: tag.name })
+        .from(tag)
+        .where(and(eq(list.id, p.id), whereStr(tag.name, args.name)));
+    },
+    memberCount: async (p: { id: number }, _: any, ctx: AuthedCtx) => {
+      const res = await ctx.db
+        .select({ memberCount: sql<number>`count(${listUser.userId})`.mapWith(Number) })
+        .from(list)
+        .where(eq(list.id, p.id))
+        .leftJoin(listUser, eq(listUser.listId, list.id))
+        .groupBy(sql`${list.id}`);
+      return res[0].memberCount;
+    },
+    itemCount: async (p: { id: number }, _: any, ctx: AuthedCtx) => {
+      const res = await ctx.db
+        .select({ itemCount: sql<number>`count(${item.id})`.mapWith(Number) })
+        .from(list)
+        .where(eq(list.id, p.id))
+        .leftJoin(item, eq(item.listId, list.id))
+        .groupBy(sql`${list.id}`);
+
+      return res[0].itemCount;
+    },
+    tagCount: async (p: { id: number }, _: any, ctx: AuthedCtx) => {
+      const res = await ctx.db
+        .select({ tagCount: sql<number>`count(${tag.id})`.mapWith(Number) })
+        .from(list)
+        .where(eq(list.id, p.id))
+        .leftJoin(listUser, eq(tag.listId, list.id))
+        .groupBy(sql`${list.id}`);
+      return res[0].tagCount;
+    },
+    items: async (p: { id: number }, args: ListItemsArgs, ctx: AuthedCtx) => {
+      const res = await ctx.db
+        .select({
+          id: item.id,
+          name: item.name,
+          status: item.status,
+          likes: item.likes,
+          createdOn: item.createdOn,
+        })
+        .from(item)
+        .leftJoin(
+          tagItem,
+          and(
+            eq(item.listId, p.id),
+            whereDate(item.createdOn, args.date),
+            whereStr(item.name, args.name),
+            eq(tagItem.itemId, item.id),
+          ),
+        )
+        .leftJoin(
+          tag,
+          and(
+            eq(tagItem.itemId, tag.id),
+            opt(inArray, args.includesTags?.tags, tag.name, args.includesTags?.tags!),
+          ),
+        )
+        .groupBy(item.id);
+      return res;
+    },
   },
 };
 
