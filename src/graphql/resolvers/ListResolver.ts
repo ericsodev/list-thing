@@ -40,7 +40,12 @@ const resolver = {
       if (slug === undefined && id === undefined) {
         throw new GraphQLError("Bad request. An id or slug is required");
       }
-      const res = (await ctx.db.select().from(list))[0];
+      const res = (
+        await ctx.db
+          .select()
+          .from(list)
+          .where(and(opt(eq, id, list.id, id), opt(eq, slug, list.slug, slug)))
+      )[0];
       return res;
     }),
   },
@@ -87,7 +92,7 @@ const resolver = {
       return await ctx.db
         .select({ id: tag.id, name: tag.name })
         .from(tag)
-        .where(and(eq(list.id, p.id), whereStr(tag.name, args.name)));
+        .where(and(eq(tag.listId, p.id), whereStr(tag.name, args.name)));
     },
     memberCount: async (p: { id: number }, _: any, ctx: AuthedCtx) => {
       const res = await ctx.db
@@ -118,6 +123,7 @@ const resolver = {
       return res[0].tagCount;
     },
     items: async (p: { id: number }, args: ListItemsArgs, ctx: AuthedCtx) => {
+      console.log("id:" + p.id);
       const res = await ctx.db
         .select({
           id: item.id,
@@ -127,19 +133,13 @@ const resolver = {
           createdOn: item.createdOn,
         })
         .from(item)
-        .leftJoin(
-          tagItem,
+        .leftJoin(tagItem, eq(tagItem.itemId, item.id))
+        .leftJoin(tag, eq(tagItem.itemId, tag.id))
+        .where(
           and(
             eq(item.listId, p.id),
             whereDate(item.createdOn, args.date),
             whereStr(item.name, args.name),
-            eq(tagItem.itemId, item.id),
-          ),
-        )
-        .leftJoin(
-          tag,
-          and(
-            eq(tagItem.itemId, tag.id),
             opt(inArray, args.includesTags?.tags, tag.name, args.includesTags?.tags!),
           ),
         )
