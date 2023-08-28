@@ -1,18 +1,21 @@
-import { gql } from "graphql-tag";
+import { graphql } from "@/graphql/types/gql";
 
-export const GetList = gql`
-  query GetList {
-    list(id: Int!) {
+export const GetList = graphql(`
+  query GetList($id: Int, $slug: String) {
+    list(id: $id, slug: $slug) {
       name
+      itemCount
+      tagCount
+      memberCount
     }
   }
-`;
+`);
 
-export const CreateList = gql`
+export const CreateList = graphql(`
   mutation CreateList($name: String!, $tags: [String!]) {
     createList(name: $name, tags: $tags) {
       id
       name
     }
   }
-`;
+`);
