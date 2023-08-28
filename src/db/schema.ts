@@ -7,10 +7,10 @@ import {
   serial,
   varchar,
   uuid,
-  date,
   primaryKey,
   index,
   unique,
+  timestamp,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["OWNER", "MEMBER"]);
@@ -32,7 +32,7 @@ export const listUser = pgTable(
       .notNull()
       .references(() => list.id, { onDelete: "cascade" }),
     role: roleEnum("role").notNull().default("MEMBER"),
-    joinDate: date("join_date").notNull().defaultNow(),
+    joinDate: timestamp("join_date").notNull().defaultNow(),
   },
   (t) => ({ pk: primaryKey(t.userId, t.listId) }),
 );
@@ -40,7 +40,7 @@ export const listUser = pgTable(
 export const list = pgTable("list", {
   id: serial("id").primaryKey(),
   slug: uuid("slug").unique().notNull().defaultRandom(),
-  createdOn: date("created_on").notNull().defaultNow(),
+  createdOn: timestamp("created_on").notNull().defaultNow(),
   name: varchar("name", { length: 35 }).notNull(),
 });
 
@@ -49,7 +49,7 @@ export const item = pgTable("item", {
   listId: integer("list_id")
     .notNull()
     .references(() => list.id, { onDelete: "cascade" }),
-  createdOn: date("created_on").notNull().defaultNow(),
+  createdOn: timestamp("created_on").notNull().defaultNow(),
   name: varchar("name", { length: 35 }).notNull(),
   adderId: integer("adder_id").references(() => user.id, { onDelete: "set null" }),
   likes: integer("likes").default(0),
@@ -87,7 +87,7 @@ export const comment = pgTable(
   "comment",
   {
     id: serial("id").primaryKey(),
-    createdOn: date("created_on").defaultNow(),
+    createdOn: timestamp("created_on").defaultNow(),
     userId: integer("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
