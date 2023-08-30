@@ -17,6 +17,7 @@ const documents = {
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
     "\n  mutation deleteList($id: Int!) {\n    deleteList(id: $id)\n  }\n": types.DeleteListDocument,
     "\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags })\n  }\n": types.AddItemDocument,
+    "\n  query Search(\n    $id: Int!\n    $tags: ItemIncludeTags\n    $status: [STATUS!]\n    $name: StringFilter\n    $date: DateFilter\n  ) {\n    list(id: $id) {\n      id\n      items(sort: { name: asc }, status: $status, name: $name, includesTags: $tags, date: $date) {\n        id\n        name\n        tags {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.SearchDocument,
     "\n  query ListBySlug($slug: String!) {\n    list(slug: $slug) {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n      items(sort: { name: asc }) {\n        id\n        name\n        tags {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.ListBySlugDocument,
     "\n  query GetList($id: Int, $slug: String) {\n    list(id: $id, slug: $slug) {\n      name\n      itemCount\n      tagCount\n      memberCount\n    }\n  }\n": types.GetListDocument,
     "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n": types.CreateListDocument,
@@ -56,6 +57,10 @@ export function graphql(source: "\n  mutation deleteList($id: Int!) {\n    delet
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags })\n  }\n"): (typeof documents)["\n  mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n    addItem(input: { name: $name, listId: $listId, tags: $tags })\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Search(\n    $id: Int!\n    $tags: ItemIncludeTags\n    $status: [STATUS!]\n    $name: StringFilter\n    $date: DateFilter\n  ) {\n    list(id: $id) {\n      id\n      items(sort: { name: asc }, status: $status, name: $name, includesTags: $tags, date: $date) {\n        id\n        name\n        tags {\n          id\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query Search(\n    $id: Int!\n    $tags: ItemIncludeTags\n    $status: [STATUS!]\n    $name: StringFilter\n    $date: DateFilter\n  ) {\n    list(id: $id) {\n      id\n      items(sort: { name: asc }, status: $status, name: $name, includesTags: $tags, date: $date) {\n        id\n        name\n        tags {\n          id\n          name\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

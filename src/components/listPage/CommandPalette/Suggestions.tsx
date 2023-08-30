@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useCommand } from "./CommandContext";
 import useThrottled from "@/hooks/useThrottledValue";
 import { twMerge } from "tailwind-merge";
 import { AddItem } from "./graphql";
 import { useListContext } from "../listContext";
-import { useAuthedMutation } from "@/hooks/useAuthRequest";
+import { useAuthedLazy, useAuthedMutation } from "@/hooks/useAuthRequest";
+import { SearchItems } from "./graphql";
 
 export type Suggestion = {
   title: NonNullable<React.ReactNode>;
@@ -13,93 +14,141 @@ export type Suggestion = {
   shortcut?: React.ReactNode;
 };
 
-const itemRegex = /^([^#\s]+(?:[^#\n\t\r])*)((?:#[^#\s][^#\n\t\r]*)*)/gm;
 const tagClasses = "px-1 py-0.5 bg-primary/30 rounded-md text-xs";
 export default function Suggestions() {
   const [{ mode, input, suggestions }, setCmd] = useCommand();
   const throttledInput = useThrottled(input);
   const [addItemFn] = useAuthedMutation(AddItem);
+  const [searchItemsFn, { loading, data: itemResults }] = useAuthedLazy(SearchItems);
   const { list, refetch } = useListContext();
 
   useEffect(() => {
-    const normalSuggestions: Suggestion[] = [
-      {
-        title: "create",
-        desc: "add an item",
-        action: () => {
-          setCmd({ mode: "create" });
+    async function curateSuggestions() {
+      const normalSuggestions: Suggestion[] = [
+        {
+          title: "create",
+          desc: "add an item",
+          action: () => {
+            setCmd({ mode: "create" });
+          },
+          shortcut: ":c",
         },
-        shortcut: ":c",
-      },
-      {
-        title: "delete",
-        desc: "delete an item",
-        action: () => {
-          setCmd({ mode: "delete" });
+        {
+          title: "delete",
+          desc: "delete an item",
+          action: () => {
+            setCmd({ mode: "delete" });
+          },
+          shortcut: ":d",
         },
-        shortcut: ":d",
-      },
-      {
-        title: "search",
-        desc: "search for items",
-        action: () => {
-          setCmd({ mode: "search" });
+        {
+          title: "search",
+          desc: "search for items",
+          action: () => {
+            setCmd({ mode: "search" });
+          },
+          shortcut: "/",
         },
-        shortcut: "/",
-      },
-    ];
-    if (mode === "normal") {
-      setCmd({ suggestions: normalSuggestions });
-      return;
-    } else if (mode === "create") {
-      const parsedInput = parseCreateInput(throttledInput);
+      ];
+      if (mode === "normal") {
+        setCmd({ suggestions: normalSuggestions });
+        return;
+      } else if (mode === "create") {
+        const parsedInput = parseCreateInput(throttledInput);
 
-      if (!parsedInput) {
-        setCmd({ suggestions: [], selectedSuggestion: undefined });
+        if (!parsedInput) {
+          setCmd({ suggestions: [], selectedSuggestion: undefined });
+          return;
+        }
+
+        const [name, tags] = parsedInput;
+        setCmd({
+          selectedSuggestion: 0,
+          suggestions: [
+            {
+              action: async () => {
+                setCmd({ input: "" });
+                const { errors } = await addItemFn({
+                  variables: { name: name, tags: tags, listId: list?.id! },
+                });
+                await refetch();
+
+                if (errors) {
+                  console.log(errors);
+                }
+              },
+              title: (
+                <>
+                  <strong className="font-medium">create item: </strong>
+                  {name}
+                </>
+              ),
+              desc: (
+                <>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {tags.map((tag) => (
+                      <div key={tag} className={tagClasses}>
+                        {tag}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ),
+            },
+          ],
+        });
+        return;
+      } else if (mode === "search") {
+        const parsedInput = parseSearchInput(throttledInput);
+        if (!parsedInput) {
+          setCmd({ suggestions: [], selectedSuggestion: undefined });
+          return;
+        }
+
+        const [name, tags] = parsedInput;
+
+        // make api call to search
+        const { data, error } = await searchItemsFn({
+          variables: {
+            id: list.id,
+            name: {
+              startsWith: name,
+            },
+            tags: {
+              tags,
+            },
+          },
+        });
+
+        if (!data || !data.list) {
+          return;
+        }
+
+        const searchResults = data.list.items;
+
+        setCmd({
+          selectedSuggestion: 0,
+          suggestions: searchResults.map((item) => ({
+            action: async () => {},
+            title: <>{item.name}</>,
+            desc: (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {tags.map((tag) => (
+                  <div key={tag} className={tagClasses}>
+                    {tag}
+                  </div>
+                ))}
+              </div>
+            ),
+          })),
+        });
         return;
       }
 
-      const [name, tags] = parsedInput;
-      setCmd({
-        selectedSuggestion: 0,
-        suggestions: [
-          {
-            action: async () => {
-              setCmd({ input: "" });
-              const { data, errors } = await addItemFn({
-                variables: { name: name, tags: tags, listId: list?.id! },
-              });
-              await refetch();
-
-              if (errors) {
-                console.log(errors);
-              }
-            },
-            title: (
-              <>
-                <strong className="font-medium">create item: </strong>
-                {name}
-              </>
-            ),
-            desc: (
-              <>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {tags.map((tag) => (
-                    <div key={tag} className={tagClasses}>
-                      {tag}
-                    </div>
-                  ))}
-                </div>
-              </>
-            ),
-          },
-        ],
-      });
-      return;
+      setCmd({ suggestions: [] });
     }
-
-    setCmd({ suggestions: [] });
-  }, [mode, setCmd, throttledInput, refetch, addItemFn, list.id]);
+    curateSuggestions();
+  }, [mode, setCmd, throttledInput, refetch, addItemFn, list.id, searchItemsFn]);
 
   return (
     <div className="">
@@ -147,20 +196,4 @@ function SuggestionItem(props: Suggestion & { idx: number }) {
       </div>
     </li>
   );
-}
-
-function parseCreateInput(input: string): [name: string, tags: string[]] | undefined {
-  const tokens = [...input.matchAll(itemRegex)][0];
-  if (!tokens) return undefined;
-
-  let [name, tagStrs] = tokens.slice(1);
-  name = name.trim();
-  let tags = tagStrs
-    .split("#")
-    .map((tag) => tag.trim())
-    .filter((t) => t.length > 0);
-
-  tags = [...new Set(tags)];
-
-  return [name, tags];
 }

@@ -9,9 +9,7 @@ import {
   Tag,
 } from "../types/graphql";
 import { AuthedCtx, authorized } from "./authUtil";
-import { nullsToUndefined } from "../util/parse";
 import { GraphQLError } from "graphql";
-import CUSTOM_ERRORS from "../errorCodes";
 import { item, list, listUser, tag, tagItem } from "@/db";
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { opt } from "@/graphql/util/where";
@@ -139,7 +137,12 @@ const resolver = {
             eq(item.listId, p.id),
             whereDate(item.createdOn, args.date),
             whereStr(item.name, args.name),
-            opt(inArray, args.includesTags?.tags, tag.name, args.includesTags?.tags!),
+            opt(
+              inArray,
+              args.includesTags?.tags && args.includesTags?.tags.length > 0,
+              tag.name,
+              args.includesTags?.tags!,
+            ),
           ),
         )
         .groupBy(item.id)

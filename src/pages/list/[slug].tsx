@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import ListContextProvider from "@/components/listPage/listContext";
 import CommandPalette from "@/components/listPage/CommandPalette";
 import Head from "next/head";
-import { GetListSlug } from "@/components/listPage/graphql";
+import { GetListSlug, SearchItems } from "@/components/listPage/graphql";
 import ItemList from "@/components/listPage/ItemList";
 
 function ListPage() {

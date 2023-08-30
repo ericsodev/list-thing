@@ -1,5 +1,5 @@
 import { useAuth } from "@/components/AuthContext";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 
 export function useAuthedQuery<T>(...params: Parameters<typeof useQuery<T>>) {
   const {
@@ -21,6 +21,19 @@ export function useAuthedMutation<T>(
     session: { token },
   } = useAuth();
   return useMutation<T>(params[0], {
+    ...params[1],
+    context: {
+      ...params[1]?.context,
+      token,
+    },
+  });
+}
+
+export function useAuthedLazy<T>(...params: Parameters<typeof useLazyQuery<T>>) {
+  const {
+    session: { token },
+  } = useAuth();
+  return useLazyQuery<T>(params[0], {
     ...params[1],
     context: {
       ...params[1]?.context,
