@@ -23,7 +23,7 @@ export default function Suggestions() {
     const [addItemFn] = useAuthedMutation(AddItem);
     const [searchItemsFn] = useAuthedLazy(SearchItems);
     const { list, refetch } = useListContext();
-    const [ref] = useAutoAnimate();
+    const [ref] = useAutoAnimate({ duration: 150 });
 
     useEffect(() => {
         async function curateSuggestions() {
@@ -187,7 +187,7 @@ function SuggestionItem(props: Suggestion & { idx: number }) {
                     </div>
                 )}
                 {selectedSuggestion === props.idx && (
-                    <div className="ml-auto text-xs min-w-[1.5rem] text-center font-medium text-slate-500 py-1 px-1.5 rounded-md border-slate-200 border-[1px] bg-slate-200/40 self-center">
+                    <div className="ml-auto text-xs min-w-[1.5rem] text-center font-medium text-green-700 py-1 px-1.5 rounded-md border-slate-200 border-[1px] bg-green-200/40 self-center">
                         enter
                     </div>
                 )}
