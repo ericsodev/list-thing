@@ -48,50 +48,62 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
     );
 
     const handleEnter = useCallback(() => {
-        if (selectedSuggestion !== undefined) {
+        if (selectedSuggestion !== undefined && !!suggestions[selectedSuggestion]) {
             const action = suggestions[selectedSuggestion].action;
             if (action) action();
         }
     }, [selectedSuggestion, suggestions]);
 
+    const handleArrowDown = useCallback(() => {
+        setCmd((curr) => {
+            return {
+                ...curr,
+                selectedSuggestion:
+                    curr.suggestions.length > 0 && curr.selectedSuggestion !== undefined
+                        ? (curr.selectedSuggestion + 1) % curr.suggestions.length
+                        : 0,
+            };
+        });
+    }, [setCmd]);
+    const handleArrowUp = useCallback(() => {
+        setCmd((curr) => {
+            return {
+                ...curr,
+                selectedSuggestion:
+                    curr.suggestions.length > 0 && curr.selectedSuggestion !== undefined
+                        ? (curr.selectedSuggestion + curr.suggestions.length - 1) %
+                          curr.suggestions.length
+                        : 0,
+            };
+        });
+    }, [setCmd]);
+
     useKeyPress("/", handleSlash);
     useEffect(() => {
-        registerKey("normal", [
+        registerKey("global", [
             { key: "Enter", cb: handleEnter },
             { key: "Escape", cb: handleEsc },
-        ]);
-        registerKey("search", [
-            { key: "Enter", cb: handleEnter },
-            { key: "Escape", cb: handleEsc },
-        ]);
-        registerKey("create", [
-            { key: "Enter", cb: handleEnter },
-            { key: "Escape", cb: handleEsc },
-        ]);
-        registerKey("delete", [
-            { key: "Enter", cb: handleEnter },
-            { key: "Escape", cb: handleEsc },
+            { key: "ArrowUp", cb: handleArrowUp },
+            { key: "ArrowDown", cb: handleArrowDown },
         ]);
 
         return () => {
-            unregisterKey("normal", [
+            unregisterKey("global", [
                 { key: "Enter", cb: handleEnter },
                 { key: "Escape", cb: handleEsc },
-            ]);
-            unregisterKey("search", [
-                { key: "Enter", cb: handleEnter },
-                { key: "Escape", cb: handleEsc },
-            ]);
-            unregisterKey("create", [
-                { key: "Enter", cb: handleEnter },
-                { key: "Escape", cb: handleEsc },
-            ]);
-            unregisterKey("delete", [
-                { key: "Enter", cb: handleEnter },
-                { key: "Escape", cb: handleEsc },
+                { key: "ArrowUp", cb: handleArrowUp },
+                { key: "ArrowDown", cb: handleArrowDown },
             ]);
         };
-    }, [registerKey, unregisterKey, handleEnter, handleEsc, handleSlash]);
+    }, [
+        registerKey,
+        unregisterKey,
+        handleArrowUp,
+        handleEnter,
+        handleEsc,
+        handleSlash,
+        handleArrowDown,
+    ]);
 
     return (
         <TextInput

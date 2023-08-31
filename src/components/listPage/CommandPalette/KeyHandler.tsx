@@ -12,14 +12,16 @@ type Action = {
     cb: () => any;
 };
 
+type Domain = Mode | "global";
+
 type KeyContextType = {
-    registerKey: (mode: Mode, action: Action | Action[]) => void;
-    unregisterKey: (mode: Mode, action: Action | Action[]) => void;
+    registerKey: (mode: Domain, action: Action | Action[]) => void;
+    unregisterKey: (mode: Domain, action: Action | Action[]) => void;
 };
 
 const KeyContext = React.createContext<KeyContextType>(undefined!);
 
-type RegisteredKeys = Record<Mode, Action[]>;
+type RegisteredKeys = Record<Domain, Action[]>;
 // careful for memory reference bugs
 // careful for callback causing rerendering, maybe useRef instead
 export default function KeyHandler({ children }: React.PropsWithChildren) {
@@ -30,10 +32,11 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
         create: [],
         delete: [],
         search: [],
+        global: [],
     });
 
     const registerKey = useCallback(
-        (mode: Mode, action: Action | Action[]) => {
+        (mode: Domain, action: Action | Action[]) => {
             setRegistered((curr) => {
                 if (action.constructor === Array) {
                     curr[mode] = curr[mode].concat(action);
@@ -47,7 +50,7 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
     );
 
     const unregisterKey = useCallback(
-        (mode: Mode, action: Action | Action[]) => {
+        (mode: Domain, action: Action | Action[]) => {
             setRegistered((curr) => {
                 const newAct = { ...curr };
                 if (action.constructor === Array) {
@@ -71,6 +74,16 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
 
     const handler = useCallback(
         (e: KeyboardEvent) => {
+            // check global
+            registered["global"]
+                .filter((x) => x.key === e.key)
+                .forEach(({ cb }) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cb();
+                });
+
+            // check individual modes
             registered[mode]
                 .filter((x) => x.key === e.key)
                 .forEach(({ cb }) => {
@@ -83,9 +96,9 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
     );
 
     useEffect(() => {
-        window.addEventListener("keyup", handler);
+        window.addEventListener("keydown", handler);
         return () => {
-            window.removeEventListener("keyup", handler);
+            window.removeEventListener("keydown", handler);
         };
     }, [handler]);
 
