@@ -1,9 +1,12 @@
 import { CommandProvider } from "./CommandContext";
 import Palette from "./CommandPalette";
+import KeyHandler from "./KeyHandler";
 export default function CommandPalette() {
-  return (
-    <CommandProvider>
-      <Palette></Palette>
-    </CommandProvider>
-  );
+    return (
+        <CommandProvider>
+            <KeyHandler>
+                <Palette></Palette>
+            </KeyHandler>
+        </CommandProvider>
+    );
 }
