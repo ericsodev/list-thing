@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Mode, useCommand } from "./CommandContext";
 
 /**
@@ -78,4 +78,8 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
     return (
         <KeyContext.Provider value={{ registerKey, unregisterKey }}>{children}</KeyContext.Provider>
     );
+}
+
+export function useKeyHandler() {
+    return useContext(KeyContext);
 }
