@@ -5,10 +5,10 @@ import { SQL } from "drizzle-orm";
 // }
 
 export function opt<T extends (...a: any[]) => SQL>(
-  fn: T,
-  condition: any,
-  ...args: Parameters<T>
+    fn: T,
+    condition: any,
+    ...args: Parameters<T>
 ): SQL | undefined {
-  if (!condition) return undefined;
-  return fn(...args);
+    if (!condition) return undefined;
+    return fn(...args);
 }
