@@ -7,6 +7,8 @@ import { useListContext } from "../listContext";
 import { useAuthedLazy, useAuthedMutation } from "@/hooks/useAuthRequest";
 import { SearchItems } from "./graphql";
 import { parseSearchInput, parseCreateInput } from "./utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export type Suggestion = {
     title: NonNullable<React.ReactNode>;
@@ -20,8 +22,9 @@ export default function Suggestions() {
     const [{ mode, input, suggestions }, setCmd] = useCommand();
     const throttledInput = useThrottled(input);
     const [addItemFn] = useAuthedMutation(AddItem);
-    const [searchItemsFn, { loading, data: itemResults }] = useAuthedLazy(SearchItems);
+    const [searchItemsFn] = useAuthedLazy(SearchItems);
     const { list, refetch } = useListContext();
+    const [ref] = useAutoAnimate();
 
     useEffect(() => {
         async function curateSuggestions() {
@@ -69,14 +72,10 @@ export default function Suggestions() {
                         {
                             action: async () => {
                                 setCmd({ input: "" });
-                                const { errors } = await addItemFn({
+                                await addItemFn({
                                     variables: { name: name, tags: tags, listId: list?.id! },
                                 });
                                 await refetch();
-
-                                if (errors) {
-                                    console.log(errors);
-                                }
                             },
                             title: (
                                 <>
@@ -107,7 +106,6 @@ export default function Suggestions() {
                 }
 
                 const [name, tags] = parsedInput;
-                console.log(parsedInput);
                 // make api call to search
                 const { data } = await searchItemsFn({
                     variables: {
@@ -153,7 +151,7 @@ export default function Suggestions() {
 
     return (
         <div className="">
-            <ul>
+            <ul ref={ref} className="flex flex-col">
                 {suggestions.length > 0 ? (
                     suggestions.map((sug, idx) => (
                         <SuggestionItem idx={idx} {...sug} key={idx}></SuggestionItem>

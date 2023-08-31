@@ -12,7 +12,7 @@ export const GetListSlug = graphql(`
                 id
                 name
                 status
-                date
+                createdOn
                 tags {
                     id
                     name
