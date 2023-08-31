@@ -13,8 +13,8 @@ type Action = {
 };
 
 type KeyContextType = {
-    registerKey: (mode: Mode, action: Action) => void;
-    unregisterKey: (mode: Mode, action: Action) => void;
+    registerKey: (mode: Mode, action: Action | Action[]) => void;
+    unregisterKey: (mode: Mode, action: Action | Action[]) => void;
 };
 
 const KeyContext = React.createContext<KeyContextType>(undefined!);
@@ -33,9 +33,13 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
     });
 
     const registerKey = useCallback(
-        (mode: Mode, action: Action) => {
+        (mode: Mode, action: Action | Action[]) => {
             setRegistered((curr) => {
-                curr[mode].push(action);
+                if (action.constructor === Array) {
+                    curr[mode] = curr[mode].concat(action);
+                } else {
+                    curr[mode].push(action as Action);
+                }
                 return curr;
             });
         },
@@ -43,12 +47,22 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
     );
 
     const unregisterKey = useCallback(
-        (mode: Mode, action: Action) => {
+        (mode: Mode, action: Action | Action[]) => {
             setRegistered((curr) => {
                 const newAct = { ...curr };
-                newAct[mode] = newAct[mode].filter(
-                    (x) => !(x.cb === action.cb && x.key === action.key),
-                );
+                if (action.constructor === Array) {
+                    action.forEach(
+                        (act) =>
+                            (newAct[mode] = newAct[mode].filter(
+                                (x) => !(x.cb === act.cb && x.key === act.key),
+                            )),
+                    );
+                } else {
+                    newAct[mode] = newAct[mode].filter(
+                        (x) =>
+                            !(x.cb === (action as Action).cb && x.key === (action as Action).key),
+                    );
+                }
                 return newAct;
             });
         },

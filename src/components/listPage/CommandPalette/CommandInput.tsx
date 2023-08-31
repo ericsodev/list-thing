@@ -56,26 +56,40 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
 
     useKeyPress("/", handleSlash);
     useEffect(() => {
-        registerKey("normal", { key: "Enter", cb: handleEnter });
-        registerKey("delete", { key: "Enter", cb: handleEnter });
-        registerKey("search", { key: "Enter", cb: handleEnter });
-        registerKey("create", { key: "Enter", cb: handleEnter });
-
-        registerKey("normal", { key: "Escape", cb: handleEsc });
-        registerKey("delete", { key: "Escape", cb: handleEsc });
-        registerKey("search", { key: "Escape", cb: handleEsc });
-        registerKey("create", { key: "Escape", cb: handleEsc });
+        registerKey("normal", [
+            { key: "Enter", cb: handleEnter },
+            { key: "Escape", cb: handleEsc },
+        ]);
+        registerKey("search", [
+            { key: "Enter", cb: handleEnter },
+            { key: "Escape", cb: handleEsc },
+        ]);
+        registerKey("create", [
+            { key: "Enter", cb: handleEnter },
+            { key: "Escape", cb: handleEsc },
+        ]);
+        registerKey("delete", [
+            { key: "Enter", cb: handleEnter },
+            { key: "Escape", cb: handleEsc },
+        ]);
 
         return () => {
-            unregisterKey("normal", { key: "Enter", cb: handleEnter });
-            unregisterKey("delete", { key: "Enter", cb: handleEnter });
-            unregisterKey("search", { key: "Enter", cb: handleEnter });
-            unregisterKey("create", { key: "Enter", cb: handleEnter });
-
-            unregisterKey("normal", { key: "Escape", cb: handleEsc });
-            unregisterKey("delete", { key: "Escape", cb: handleEsc });
-            unregisterKey("search", { key: "Escape", cb: handleEsc });
-            unregisterKey("create", { key: "Escape", cb: handleEsc });
+            unregisterKey("normal", [
+                { key: "Enter", cb: handleEnter },
+                { key: "Escape", cb: handleEsc },
+            ]);
+            unregisterKey("search", [
+                { key: "Enter", cb: handleEnter },
+                { key: "Escape", cb: handleEsc },
+            ]);
+            unregisterKey("create", [
+                { key: "Enter", cb: handleEnter },
+                { key: "Escape", cb: handleEsc },
+            ]);
+            unregisterKey("delete", [
+                { key: "Enter", cb: handleEnter },
+                { key: "Escape", cb: handleEsc },
+            ]);
         };
     }, [registerKey, unregisterKey, handleEnter, handleEsc, handleSlash]);
 
