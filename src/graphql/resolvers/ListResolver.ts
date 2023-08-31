@@ -1,17 +1,15 @@
 import {
-    Item,
     ListItemsArgs,
     ListTagsArgs,
     MutationCreateListArgs,
     MutationDeleteListArgs,
     QueryListArgs,
     QueryListsArgs,
-    Tag,
 } from "../types/graphql";
 import { AuthedCtx, authorized } from "./authUtil";
 import { GraphQLError } from "graphql";
 import { item, list, listUser, tag, tagItem } from "@/db";
-import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { opt } from "@/graphql/util/where";
 import { whereDate, whereStr } from "../util/dbFilters";
 import { sortAll, sortParse } from "../util/dbSort";

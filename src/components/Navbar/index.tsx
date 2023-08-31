@@ -4,11 +4,9 @@ import { twMerge } from "tailwind-merge";
 import { useAuth } from "../AuthContext";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "../ui/navigation-menu";
 import { UserCircle2 } from "lucide-react";

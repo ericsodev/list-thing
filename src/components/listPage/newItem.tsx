@@ -3,7 +3,6 @@ import { Form, Formik } from "formik";
 import React, { useState } from "react";
 import FormLabel from "../FormLabel";
 import TextInput from "../TextInput";
-import gql from "graphql-tag";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { twMerge } from "tailwind-merge";
 

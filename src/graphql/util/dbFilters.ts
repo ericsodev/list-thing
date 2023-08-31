@@ -1,6 +1,6 @@
 import { opt } from "./where";
 import type { DateFilter, StringFilter } from "../types/graphql";
-import { AnyColumn, SQL, and, eq, gt, gte, ilike, lt, lte } from "drizzle-orm";
+import { AnyColumn, and, eq, gt, gte, ilike, lt, lte } from "drizzle-orm";
 
 export function whereStr(value: AnyColumn, filter: StringFilter | undefined | null) {
   if (!filter) return undefined;

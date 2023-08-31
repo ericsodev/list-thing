@@ -1,4 +1,3 @@
-import { GraphQLErrorOptions } from "graphql";
 
 const CUSTOM_ERRORS = {
   NO_USER: ["This user this not exist", { extensions: { code: "NO_USER" } }],

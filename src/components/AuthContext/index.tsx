@@ -3,7 +3,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import jwt from "jsonwebtoken";
 import { getTokenQuery, logoutMutation } from "./graphql";
-import { setContext } from "@apollo/client/link/context";
 
 type AuthContext = {
   session: {

@@ -1,8 +1,6 @@
 import TextInput from "@/components/TextInput";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useKeyPress } from "@/hooks/useKeyPress";
-import useThrottled from "@/hooks/useThrottledValue";
-import React, { ElementRef, useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { Mode, useCommand } from "./CommandContext";
 
 type Props = {

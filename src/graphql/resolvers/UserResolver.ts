@@ -1,8 +1,8 @@
 import { user } from "@/db";
 import { Context } from "../context";
 import { QueryUsersArgs, User } from "../types/graphql";
-import { authorized, hasValidToken } from "./authUtil";
-import { AnyColumn, SQL, and, eq, ilike, like, or } from "drizzle-orm";
+import { authorized } from "./authUtil";
+import { and, eq, ilike, or } from "drizzle-orm";
 import { opt } from "../util/where";
 
 const resolver = {

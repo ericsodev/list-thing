@@ -1,7 +1,7 @@
 import { MutationAddItemArgs } from "../types/graphql";
 import { AuthedCtx, authorized } from "./authUtil";
 import { item, tag, tagItem } from "@/db";
-import { and, eq, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const resolver = {
     Mutation: {

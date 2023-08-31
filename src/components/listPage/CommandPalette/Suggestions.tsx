@@ -7,7 +7,6 @@ import { useListContext } from "../listContext";
 import { useAuthedLazy, useAuthedMutation } from "@/hooks/useAuthRequest";
 import { SearchItems } from "./graphql";
 import { parseSearchInput, parseCreateInput } from "./utils";
-import { AnimatePresence, motion } from "framer-motion";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export type Suggestion = {

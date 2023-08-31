@@ -1,6 +1,6 @@
 import { useAuth } from "@/components/AuthContext";
 import { getAuthLayout } from "@/components/Authenticated";
-import React, { ReactElement, useRef } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import ListCard from "@/components/dashboard/ListCard";
