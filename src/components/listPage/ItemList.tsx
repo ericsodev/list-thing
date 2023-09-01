@@ -28,7 +28,7 @@ export default function ItemList({ className, ...props }: React.HTMLProps<HTMLDi
                             setModal({ open: true, selectedItemId: item.id });
                         }}
                         key={item.id}
-                        className="flex gap-3 w-full bg-secondary/50 hover:bg-secondary/80 py-2 px-3 rounded-md"
+                        className="flex cursor-pointer gap-3 w-full bg-secondary/50 hover:bg-secondary py-2 px-3 rounded-md"
                     >
                         <p className="text-sm">{item.name}</p>
                         <div className="ml-auto flex gap-1">

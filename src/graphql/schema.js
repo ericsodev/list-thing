@@ -155,6 +155,7 @@ const typeDefs = gql`
     type Query {
         lists(input: ListInput): [List!]!
         list(id: Int, slug: String): List
+        getComments(id: Int!): [Comment!]
         tagSearch(input: TagSearchInput): [String!]!
         users(input: UserSearchInput!): [User!]!
         user(name: String, id: Int): User

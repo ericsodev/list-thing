@@ -21,3 +21,13 @@ export const GetListSlug = graphql(`
         }
     }
 `);
+
+export const GetComments = graphql(`
+    query GetComments($id: Int!) {
+        getComments(id: $id) {
+            id
+            text
+            createdOn
+        }
+    }
+`);

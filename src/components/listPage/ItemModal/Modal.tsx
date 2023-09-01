@@ -4,6 +4,8 @@ import { useModalStore } from "./ContextProvider";
 import { useListContext } from "../listContext";
 import { useKeyPress } from "@/hooks/useKeyPress";
 import { Minimize2, Plus } from "lucide-react";
+import Comments from "./Comments";
+import AdminPanel from "./AdminPanel";
 
 export default function Modal() {
     const [modal, setModal] = useModalStore();
@@ -39,7 +41,7 @@ export default function Modal() {
                                 translateY: -300,
                             }}
                             exit={{ opacity: 0, scale: 0 }}
-                            className="z-[35] bg-slate-50 p-6 drop-shadow-sm rounded-md absolute inset-y-28 w-full md:w-1/2 2xl:w-1/3 left-1/2"
+                            className="z-[35] bg-slate-50 p-6 drop-shadow-sm rounded-md absolute inset-y-24 md:inset-y-28 w-full sm:w-3/4 md:w-2/3 2xl:w-1/2 left-1/2"
                         >
                             <div className="flex flex-col h-full gap-2">
                                 <span className="flex">
@@ -73,6 +75,16 @@ export default function Modal() {
                                         <Plus className="h-3.5 inline-block mr-1" />
                                         add tag
                                     </div>
+                                </span>
+                                <span className="flex grow shrink basis-full min-h-0 mt-8 gap-6 h-full">
+                                    <Comments
+                                        className="h-full basis-1/2"
+                                        itemId={item.id}
+                                    ></Comments>
+                                    <AdminPanel
+                                        item={item}
+                                        className="basis-1/2 overflow-auto"
+                                    ></AdminPanel>
                                 </span>
                             </div>
                         </motion.div>
