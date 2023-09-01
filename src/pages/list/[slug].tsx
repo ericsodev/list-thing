@@ -1,5 +1,5 @@
-import { getAuthLayout } from "@/components/Authenticated";
-import React from "react";
+import Authenticated from "@/components/Authenticated";
+import React, { ReactElement } from "react";
 import { useAuthedQuery } from "@/hooks/useAuthRequest";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/router";
@@ -10,6 +10,7 @@ import CommandPalette from "@/components/listPage/CommandPalette";
 import Head from "next/head";
 import { GetListSlug } from "@/components/listPage/graphql";
 import ItemList from "@/components/listPage/ItemList";
+import Modal, { ModalContext } from "@/components/listPage/ItemModal";
 
 function ListPage() {
     const router = useRouter();
@@ -53,9 +54,10 @@ function ListPage() {
                     loading,
                 }}
             >
-                {data?.list && <CommandPalette></CommandPalette>}
                 <div className="col-start-2 max-h-full col-span-1 flex flex-col items-center">
-                    <div className="sticky py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
+                    {data?.list && <Modal></Modal>}
+                    {data?.list && <CommandPalette></CommandPalette>}
+                    <div className="sticky z-20 py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
                         <h1 className="text-5xl text-slate-800 font-medium">
                             {data?.list && data.list.name}
                         </h1>
@@ -75,6 +77,12 @@ function ListPage() {
     );
 }
 
-ListPage.getLayout = getAuthLayout;
+ListPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Authenticated>
+            <ModalContext>{page}</ModalContext>
+        </Authenticated>
+    );
+};
 
 export default ListPage;
