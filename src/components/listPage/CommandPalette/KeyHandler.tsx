@@ -75,6 +75,7 @@ export default function KeyHandler({ children }: React.PropsWithChildren) {
     const handler = useCallback(
         (e: KeyboardEvent) => {
             // check global
+
             registered["global"]
                 .filter((x) => x.key === e.key)
                 .forEach(({ cb }) => {

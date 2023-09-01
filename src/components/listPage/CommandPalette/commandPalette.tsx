@@ -28,7 +28,7 @@ export default function CommandPalette() {
                         onClick={closeFn}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="bg-slate-400/10 backdrop-blur-sm inset-0 w-full h-full fixed z-40"
+                        className="bg-slate-400/10 backdrop-blur-sm inset-0 w-full h-full fixed z-[45]"
                         exit={{ opacity: 0 }}
                         transition={{ type: "just" }}
                     ></motion.div>
@@ -54,12 +54,12 @@ export default function CommandPalette() {
                     },
                 }}
                 className="bg-background z-50 border-slate-300 border-[1px] fixed
-        min-h-fit drop-shadow-lg rounded-md w-96"
+                            min-h-fit drop-shadow-lg rounded-md w-96"
             >
                 <div className="w-full border-b-[1px] border-slate-200 py-1">
                     <CommandInput {...{ openFn, closeFn }}></CommandInput>
                 </div>
-                {cmd.isOpen && <Suggestions></Suggestions>}
+                {cmd.isOpen && <Suggestions {...{ openFn, closeFn }}></Suggestions>}
             </motion.div>
         </>
     );

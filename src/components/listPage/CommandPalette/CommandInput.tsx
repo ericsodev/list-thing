@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Mode, useCommand } from "./CommandContext";
 import { useKeyHandler } from "./KeyHandler";
 import { useKeyPress } from "@/hooks/useKeyPress";
+import { useModalStore } from "../ItemModal";
 
 type Props = {
     openFn: () => void;
@@ -17,7 +18,7 @@ const placeholders: { [key in Mode]: string } = {
 };
 
 export default function CommandInput({ closeFn, openFn, ...props }: Props) {
-    const [{ mode, input, suggestions, selectedSuggestion }, setCmd] = useCommand();
+    const [{ mode, input, suggestions, selectedSuggestion, isOpen }, setCmd] = useCommand();
     const ref = useRef<HTMLInputElement>(null);
     const { registerKey, unregisterKey } = useKeyHandler();
     const handleEsc = useCallback(() => {
@@ -105,6 +106,10 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
         handleArrowDown,
     ]);
 
+    useEffect(() => {
+        if (!isOpen) ref.current?.blur();
+    }, [isOpen]);
+
     return (
         <TextInput
             {...props}
@@ -112,7 +117,7 @@ export default function CommandInput({ closeFn, openFn, ...props }: Props) {
             value={input}
             onChange={handleInput}
             placeholder={placeholders[mode]}
-            onFocus={openFn}
+            onClick={openFn}
             className="placeholder:font-light placeholder:text-sm pl-3.5 placeholder:text-center bg-transparent focus:outline-none w-full shadow-none text-slate-600"
         ></TextInput>
     );

@@ -8,6 +8,7 @@ import { useAuthedLazy, useAuthedMutation } from "@/hooks/useAuthRequest";
 import { SearchItems } from "./graphql";
 import { parseSearchInput, parseCreateInput } from "./utils";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { useModalStore } from "../ItemModal";
 
 export type Suggestion = {
     title: NonNullable<React.ReactNode>;
@@ -16,14 +17,20 @@ export type Suggestion = {
     shortcut?: React.ReactNode;
 };
 
+type Props = {
+    openFn: () => void;
+    closeFn: () => void;
+};
+
 const tagClasses = "px-1 py-0.5 bg-primary/30 rounded-md text-xs";
-export default function Suggestions() {
+export default function Suggestions({ openFn, closeFn }: Props) {
     const [{ mode, input, suggestions }, setCmd] = useCommand();
     const throttledInput = useThrottled(input);
     const [addItemFn] = useAuthedMutation(AddItem);
     const [searchItemsFn] = useAuthedLazy(SearchItems);
     const { list, refetch } = useListContext();
     const [ref] = useAutoAnimate({ duration: 150 });
+    const [, setModal] = useModalStore();
 
     useEffect(() => {
         async function curateSuggestions() {
@@ -127,7 +134,10 @@ export default function Suggestions() {
                 setCmd({
                     selectedSuggestion: 0,
                     suggestions: searchResults.map((item) => ({
-                        action: async () => {},
+                        action: () => {
+                            setModal({ selectedItemId: item.id, open: true });
+                            closeFn();
+                        },
                         title: <>{item.name}</>,
                         desc: (
                             <div className="flex flex-wrap gap-1.5 pt-1">
@@ -146,7 +156,17 @@ export default function Suggestions() {
             setCmd({ suggestions: [] });
         }
         curateSuggestions();
-    }, [mode, setCmd, throttledInput, refetch, addItemFn, list.id, searchItemsFn]);
+    }, [
+        mode,
+        setCmd,
+        throttledInput,
+        refetch,
+        addItemFn,
+        list.id,
+        searchItemsFn,
+        setModal,
+        closeFn,
+    ]);
 
     return (
         <div className="">

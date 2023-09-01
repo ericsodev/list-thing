@@ -55,8 +55,8 @@ function ListPage() {
                 }}
             >
                 <div className="col-start-2 max-h-full col-span-1 flex flex-col items-center">
-                    {data?.list && <Modal></Modal>}
                     {data?.list && <CommandPalette></CommandPalette>}
+                    {data?.list && <Modal></Modal>}
                     <div className="sticky z-20 py-16 -top-16 backdrop-blur-sm w-full text-center bg-white/90">
                         <h1 className="text-5xl text-slate-800 font-medium">
                             {data?.list && data.list.name}
