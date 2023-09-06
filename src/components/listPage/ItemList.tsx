@@ -6,7 +6,7 @@ import { useModalStore } from "./ItemModal";
 
 export default function ItemList({ className, ...props }: React.HTMLProps<HTMLDivElement>) {
     const { list, loading } = useListContext();
-    const [Modal, setModal] = useModalStore();
+    const [_, setModal] = useModalStore();
     const isLoading = loading && !list;
     return (
         <div className={twMerge("flex h-full flex-col gap-2", className)}>

@@ -23,11 +23,19 @@ export const GetListSlug = graphql(`
 `);
 
 export const GetComments = graphql(`
-    query GetComments($id: Int!) {
-        getComments(id: $id) {
+    query GetComments($itemId: Int!) {
+        getComments(itemId: $itemId) {
             id
             text
             createdOn
         }
     }
 `);
+
+export const AddComment = graphql(`
+    mutation AddComment($itemId: Int!, $content: String!) {
+        addComment(content: $content, itemId: $itemId) {
+            id
+        }
+    }
+`)

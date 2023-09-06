@@ -19,7 +19,8 @@ const documents = {
     "\n    mutation AddItem($name: String!, $tags: [String!], $listId: Int!) {\n        addItem(input: { name: $name, listId: $listId, tags: $tags })\n    }\n": types.AddItemDocument,
     "\n    query Search(\n        $id: Int!\n        $tags: ItemIncludeTags\n        $status: [STATUS!]\n        $name: StringFilter\n        $date: DateFilter\n    ) {\n        list(id: $id) {\n            id\n            items(\n                sort: { name: asc }\n                status: $status\n                name: $name\n                includesTags: $tags\n                date: $date\n            ) {\n                id\n                name\n                tags {\n                    id\n                    name\n                }\n            }\n        }\n    }\n": types.SearchDocument,
     "\n    query ListBySlug($slug: String!) {\n        list(slug: $slug) {\n            id\n            name\n            memberCount\n            itemCount\n            slug\n            items(sort: { name: asc }) {\n                id\n                name\n                status\n                createdOn\n                tags {\n                    id\n                    name\n                }\n            }\n        }\n    }\n": types.ListBySlugDocument,
-    "\n    query GetComments($id: Int!) {\n        getComments(id: $id) {\n            id\n            text\n            createdOn\n        }\n    }\n": types.GetCommentsDocument,
+    "\n    query GetComments($itemId: Int!) {\n        getComments(itemId: $itemId) {\n            id\n            text\n            createdOn\n        }\n    }\n": types.GetCommentsDocument,
+    "\n    mutation AddComment($itemId: Int!, $content: String!) {\n        addComment(content: $content, itemId: $itemId) {\n            id\n        }\n    }\n": types.AddCommentDocument,
     "\n  query GetList($id: Int, $slug: String) {\n    list(id: $id, slug: $slug) {\n      name\n      itemCount\n      tagCount\n      memberCount\n    }\n  }\n": types.GetListDocument,
     "\n  mutation CreateList($name: String!, $tags: [String!]) {\n    createList(name: $name, tags: $tags) {\n      id\n      name\n    }\n  }\n": types.CreateListDocument,
     "\n  query GetLists {\n    lists {\n      id\n      name\n      memberCount\n      itemCount\n      slug\n    }\n  }\n": types.GetListsDocument,
@@ -69,7 +70,11 @@ export function graphql(source: "\n    query ListBySlug($slug: String!) {\n     
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query GetComments($id: Int!) {\n        getComments(id: $id) {\n            id\n            text\n            createdOn\n        }\n    }\n"): (typeof documents)["\n    query GetComments($id: Int!) {\n        getComments(id: $id) {\n            id\n            text\n            createdOn\n        }\n    }\n"];
+export function graphql(source: "\n    query GetComments($itemId: Int!) {\n        getComments(itemId: $itemId) {\n            id\n            text\n            createdOn\n        }\n    }\n"): (typeof documents)["\n    query GetComments($itemId: Int!) {\n        getComments(itemId: $itemId) {\n            id\n            text\n            createdOn\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    mutation AddComment($itemId: Int!, $content: String!) {\n        addComment(content: $content, itemId: $itemId) {\n            id\n        }\n    }\n"): (typeof documents)["\n    mutation AddComment($itemId: Int!, $content: String!) {\n        addComment(content: $content, itemId: $itemId) {\n            id\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -7,9 +7,12 @@ import { Minimize2, Plus } from "lucide-react";
 import Comments from "./Comments";
 import AdminPanel from "./AdminPanel";
 
+// TODO:
+// add comment resolver for query and mutation
+// create ui for commenting
+
 export default function Modal() {
     const [modal, setModal] = useModalStore();
-    const ref = useRef<HTMLDivElement>();
     const {
         list: { items },
     } = useListContext();

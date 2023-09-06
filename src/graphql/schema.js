@@ -54,7 +54,7 @@ const typeDefs = gql`
     type Comment {
         id: Int!
         text: String!
-        user: User!
+        adder: User!
         createdOn: DateTime!
         item: Item!
     }
@@ -155,7 +155,7 @@ const typeDefs = gql`
     type Query {
         lists(input: ListInput): [List!]!
         list(id: Int, slug: String): List
-        getComments(id: Int!): [Comment!]
+        getComments(itemId: Int!): [Comment!]
         tagSearch(input: TagSearchInput): [String!]!
         users(input: UserSearchInput!): [User!]!
         user(name: String, id: Int): User
@@ -167,6 +167,9 @@ const typeDefs = gql`
         authenticate(input: AuthenticationInput!): String
         createAccount(input: CreateUserInput!): Boolean!
         createList(name: String!, tags: [String!]): List!
+        addComment(content: String!, itemId: Int!): Comment
+        deleteComment(commentId: Int!): Boolean
+        addTags(tags: [String!]!, itemId: Int!): Comment
         deleteList(id: Int!): Boolean!
         addItem(input: AddItemInput!): Int!
         removeItem(input: AddItemInput!): Boolean
