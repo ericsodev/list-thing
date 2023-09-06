@@ -4,17 +4,19 @@ import { GetComments } from "../graphql";
 import { twMerge } from "tailwind-merge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddCommentBox } from "./AddCommentBox";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type Props = {
     itemId: number;
 } & React.HTMLProps<HTMLDivElement>;
 export default function Comments({ itemId, className }: Props) {
     const { data, loading, refetch } = useAuthedQuery(GetComments, { variables: { itemId: itemId } });
+    const [ref] = useAutoAnimate()
 
     return (
         <div className={twMerge("flex flex-col gap-4", className)}>
             <h2 className="text-slate-600 text-sm">Comments</h2>
-            <div className="flex rounded-lg flex-col gap-3 h-full overflow-auto">
+            <div ref={ref} className="flex rounded-lg flex-col gap-3 h-full overflow-auto">
                 {loading &&
                     <>
 
