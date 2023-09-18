@@ -5,7 +5,7 @@ import listResolver from "./ListResolver";
 import userResolver from "./UserResolver";
 import tagResolver from "./TagResolver";
 
-import { mergeResolvers } from "@graphql-tools/merge";
+//import { mergeResolvers } from "@graphql-tools/merge";
 
 const resolvers = [
   authResolver,
@@ -16,4 +16,4 @@ const resolvers = [
   tagResolver,
 ];
 
-export default mergeResolvers(resolvers);
+export default resolvers;
