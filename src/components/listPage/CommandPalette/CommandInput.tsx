@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Mode, useCommand } from "./CommandContext";
 import { useKeyHandler } from "./KeyHandler";
 import { useKeyPress } from "@/hooks/useKeyPress";
-import { useModalStore } from "../ItemModal";
 
 type Props = {
     openFn: () => void;

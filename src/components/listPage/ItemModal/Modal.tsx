@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useModalStore } from "./ContextProvider";
 import { useListContext } from "../listContext";
